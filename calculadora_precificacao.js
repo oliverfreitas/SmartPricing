@@ -354,6 +354,7 @@ function carregarHistoricoProjetos() {
             <h4>${projeto.nomeProjetoSalvo}</h4>
             <p><strong>Contratante:</strong> ${projeto.resumoParaLista.nomeContratante || "N/A"}</p>
             <p><strong>Data do Projeto:</strong> ${formatDate(projeto.resumoParaLista.dataProjeto)}</p>
+            <p><strong>Descrição:</strong> ${projeto.inputsProjeto.descricaoProjeto ? (projeto.inputsProjeto.descricaoProjeto.substring(0, 100) + (projeto.inputsProjeto.descricaoProjeto.length > 100 ? "..." : "")) : "N/A"}</p>
             <p><strong>Preço PIX:</strong> ${projeto.resumoParaLista.precoPixFormatado}</p>
             <p><strong>Preço Cartão:</strong> ${projeto.resumoParaLista.precoCartaoFormatado}</p>
             <div class="historico-item-actions">
@@ -376,6 +377,12 @@ function exibirDetalhesProjeto(projetoId) {
     document.getElementById("modalNomeProjetoSalvo").textContent = projeto.nomeProjetoSalvo;
     const modalBody = document.getElementById("modalBodyDetalhesProjeto");
     modalBody.innerHTML = `
+        <h3>Informações do Projeto</h3>
+        <p><strong>Nome do Contratante:</strong> ${projeto.inputsProjeto.nomeContratante || "N/A"}</p>
+        <p><strong>Data do Projeto:</strong> ${formatDate(projeto.inputsProjeto.dataProjeto)}</p>
+        <p><strong>Descrição Detalhada:</strong></p>
+        <p style="white-space: pre-wrap; word-break: break-word;">${projeto.inputsProjeto.descricaoProjeto || "N/A"}</p>
+        <hr>
         <h3>Resultados do Projeto</h3>
         <p>Custo Total Alocado ao Projeto: <strong>${projeto.detalhesFormatados.resCustoTotalAlocadoProjeto}</strong></p>
         <p>Valor do Lucro Calculado: <strong>${projeto.detalhesFormatados.resLucroProjeto}</strong></p>
