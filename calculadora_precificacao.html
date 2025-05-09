@@ -161,13 +161,13 @@
             <div class="section-column">
                 <div>
                     <div class="section">
-                        <h3>Custos Pessoais Mensais <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Inclua aqui todas as suas despesas pessoais que você precisa cobrir com o seu trabalho, como aluguel, alimentação, transporte, lazer, etc.</span></span></h3>
+                        <h3>Custos Pessoais Mensais <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">São os gastos que você tem para manter o seu estilo de vida e o bem-estar da sua família. São despesas que você precisa cobrir independentemente de estar trabalhando ou não. Exemplos: Aluguel ou prestação da casa, condomínio, IPTU, luz, água, gás, internet, telefone, Alimentação, combustível, manutenção do carro, transporte público, escolas, cursos, academia, plano de saúde, farmácia.</span></span></h3>
                         <div id="custosPessoaisList"></div>
                         <button type="button" onclick="addCustoPessoalItem()">Adicionar Custo Pessoal</button>
                     </div>
                     <div class="section">
-                        <h3>Custos da Empresa Mensais <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Liste os custos fixos mensais da sua atividade profissional, como aluguel de estúdio (se houver), software, marketing, contador, internet, telefone, etc. Não inclua o seu pró-labore aqui, pois ele tem um campo específico.</span></span></h3>
-                        <label for="salarioProLabore">Salário (Pró-labore) Desejado: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Qual o valor mensal que você deseja retirar como seu salário (pró-labore)?</span></span></label>
+                        <h3>Custos da Empresa Mensais <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">São os gastos que você tem diretamente relacionados ao funcionamento do seu negócio. Exemplos: Programas de edição de vídeo e foto, ferramentas de design, armazenamento em nuvem, domínio, hospedagem, anúncios pagos, impulsionamento de posts, plano de celular, internet, MEI, contador, taxas administrativas, papel, caneta, equipamentos de escritório.</span></span></h3>
+                        <label for="salarioProLabore">Salário (Pró-labore) Desejado: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Valor que você deseja retirar da sua empresa pelo seu trabalho.</span></span></label>
                         <input type="number" id="salarioProLabore" placeholder="Ex: 3000">
                         <div id="custosEmpresaList"></div>
                         <button type="button" onclick="addCustoEmpresaItem()">Adicionar Custo da Empresa</button>
@@ -175,17 +175,17 @@
                 </div>
                 <div>
                     <div class="section">
-                        <h3>Equipamentos <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Liste todos os seus equipamentos (câmeras, lentes, computador, etc.), o valor que você pagou por eles e a vida útil estimada em anos. Isso ajudará a calcular a depreciação mensal.</span></span></h3>
+                        <h3>Equipamentos <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">São todos os itens que você usa diretamente na execução do seu ofício. Exemplos: Câmera, Lentes, Iluminação, Laptop, Computadores, Monitores, Tablets, Impressora.</span></span></h3>
                         <div id="equipamentosList"></div>
                         <button type="button" onclick="addEquipamentoItem()">Adicionar Equipamento</button>
                     </div>
                     <div class="section">
                         <h3>Parâmetros de Trabalho e Financeiros</h3>
-                        <label for="diasTrabalhadosMes">Dias Trabalhados no Mês: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Quantos dias você efetivamente trabalha ou pretende trabalhar por mês, em média? (Ex: 20, 22 dias)</span></span></label>
+                        <label for="diasTrabalhadosMes">Dias Trabalhados no Mês: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Quantidade de dias que você pretende se dedicar ao trabalho a cada mês.</span></span></label>
                         <input type="number" id="diasTrabalhadosMes" placeholder="Ex: 22">
-                        <label for="horasTrabalhoDia">Horas de Trabalho por Dia: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Quantas horas você trabalha ou pretende trabalhar por dia, em média? (Ex: 6, 8 horas)</span></span></label>
+                        <label for="horasTrabalhoDia">Horas de Trabalho por Dia: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Quantidade de horas que você pretende se dedicar ao trabalho a cada dia.</span></span></label>
                         <input type="number" id="horasTrabalhoDia" placeholder="Ex: 8">
-                        <label for="percentualGastosOcasionais">Percentual para Gastos Ocasionais (%): <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Um percentual sobre seus custos fixos para cobrir despesas inesperadas ou que não ocorrem todo mês (Ex: 10% para um pequeno colchão financeiro).</span></span></label>
+                        <label for="percentualGastosOcasionais">Percentual para Gastos Ocasionais (%): <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Reserva de emergencia para gastos não previstos. Exemplos: Pendrive não funciona e precisa ser trocado. Pneu furou no caminho para o trabalho. Falta de material em um fornecedor barato sendo necessário contatar um fornecedor mais caro.</span></span></label>
                         <input type="number" id="percentualGastosOcasionais" placeholder="Ex: 10" value="10">
                     </div>
                 </div>
