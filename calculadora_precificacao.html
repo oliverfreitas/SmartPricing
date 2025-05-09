@@ -93,6 +93,56 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        /* Estilos para Tooltip com Ícone */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            margin-left: 8px; /* Espaçamento do elemento ao qual está anexado */
+            vertical-align: middle; /* Alinha o ícone com o texto ao lado */
+        }
+        .tooltip-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #007bff; /* Cor azul */
+            color: white;
+            text-align: center;
+            font-size: 12px;
+            line-height: 18px; /* Centraliza o '?' verticalmente */
+            font-weight: bold;
+            cursor: help;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            width: 220px; /* Largura do tooltip */
+            background-color: #333; /* Cor de fundo do tooltip (mais escura) */
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1001; /* Acima de outros elementos */
+            bottom: 135%; /* Posição acima do ícone */
+            left: 50%;
+            margin-left: -110px; /* Metade da largura para centralizar */
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            font-size: 0.88em;
+            font-weight: normal;
+            line-height: 1.5;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        /* Ajuste para h3 não herdar bold no tooltip-text */
+        h3 .tooltip-text {
+            font-weight: normal;
+        }
+
     </style>
 </head>
 <body>
@@ -111,13 +161,13 @@
             <div class="section-column">
                 <div>
                     <div class="section">
-                        <h3>Custos Pessoais Mensais</h3>
+                        <h3>Custos Pessoais Mensais <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Inclua aqui todas as suas despesas pessoais que você precisa cobrir com o seu trabalho, como aluguel, alimentação, transporte, lazer, etc.</span></span></h3>
                         <div id="custosPessoaisList"></div>
                         <button type="button" onclick="addCustoPessoalItem()">Adicionar Custo Pessoal</button>
                     </div>
                     <div class="section">
-                        <h3>Custos da Empresa Mensais</h3>
-                        <label for="salarioProLabore">Salário (Pró-labore) Desejado:</label>
+                        <h3>Custos da Empresa Mensais <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Liste os custos fixos mensais da sua atividade profissional, como aluguel de estúdio (se houver), software, marketing, contador, internet, telefone, etc. Não inclua o seu pró-labore aqui, pois ele tem um campo específico.</span></span></h3>
+                        <label for="salarioProLabore">Salário (Pró-labore) Desejado: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Qual o valor mensal que você deseja retirar como seu salário (pró-labore)?</span></span></label>
                         <input type="number" id="salarioProLabore" placeholder="Ex: 3000">
                         <div id="custosEmpresaList"></div>
                         <button type="button" onclick="addCustoEmpresaItem()">Adicionar Custo da Empresa</button>
@@ -125,17 +175,17 @@
                 </div>
                 <div>
                     <div class="section">
-                        <h3>Equipamentos</h3>
+                        <h3>Equipamentos <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Liste todos os seus equipamentos (câmeras, lentes, computador, etc.), o valor que você pagou por eles e a vida útil estimada em anos. Isso ajudará a calcular a depreciação mensal.</span></span></h3>
                         <div id="equipamentosList"></div>
                         <button type="button" onclick="addEquipamentoItem()">Adicionar Equipamento</button>
                     </div>
                     <div class="section">
                         <h3>Parâmetros de Trabalho e Financeiros</h3>
-                        <label for="diasTrabalhadosMes">Dias Trabalhados no Mês:</label>
+                        <label for="diasTrabalhadosMes">Dias Trabalhados no Mês: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Quantos dias você efetivamente trabalha ou pretende trabalhar por mês, em média? (Ex: 20, 22 dias)</span></span></label>
                         <input type="number" id="diasTrabalhadosMes" placeholder="Ex: 22">
-                        <label for="horasTrabalhoDia">Horas de Trabalho por Dia:</label>
+                        <label for="horasTrabalhoDia">Horas de Trabalho por Dia: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Quantas horas você trabalha ou pretende trabalhar por dia, em média? (Ex: 6, 8 horas)</span></span></label>
                         <input type="number" id="horasTrabalhoDia" placeholder="Ex: 8">
-                        <label for="percentualGastosOcasionais">Percentual para Gastos Ocasionais (%):</label>
+                        <label for="percentualGastosOcasionais">Percentual para Gastos Ocasionais (%): <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Um percentual sobre seus custos fixos para cobrir despesas inesperadas ou que não ocorrem todo mês (Ex: 10% para um pequeno colchão financeiro).</span></span></label>
                         <input type="number" id="percentualGastosOcasionais" placeholder="Ex: 10" value="10">
                     </div>
                 </div>
