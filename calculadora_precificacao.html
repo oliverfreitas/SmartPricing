@@ -166,10 +166,9 @@
                         <button type="button" onclick="addCustoPessoalItem()">Adicionar Custo Pessoal</button>
                     </div>
                     <div class="section">
-                        <h3><label for="salarioProLabore">Salário (Pró-labore) Desejado: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Qual o valor mensal que você deseja retirar como seu salário (pró-labore)?</span></span></label></h3>
-                        <input type="number" id="salarioProLabore" placeholder="Ex: 3000">
-                        
                         <h3>Custos da Empresa Mensais <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Liste os custos fixos mensais da sua atividade profissional, como aluguel de estúdio (se houver), software, marketing, contador, internet, telefone, etc. Não inclua o seu pró-labore aqui, pois ele tem um campo específico.</span></span></h3>
+                        <label for="salarioProLabore">Salário (Pró-labore) Desejado: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Qual o valor mensal que você deseja retirar como seu salário (pró-labore)?</span></span></label>
+                        <input type="number" id="salarioProLabore" placeholder="Ex: 3000">
                         <div id="custosEmpresaList"></div>
                         <button type="button" onclick="addCustoEmpresaItem()">Adicionar Custo da Empresa</button>
                     </div>
@@ -220,17 +219,17 @@
                     </div>
                     <div class="section">
                         <h3>Tempo e Entregáveis</h3>
-                        <label for="tempoTrabalhoProjeto">Tempo de Trabalho Total Estimado para o Projeto (horas):<span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Inserir texto explicativo aqui</span></span></label>
+                        <label for="tempoTrabalhoProjeto">Tempo de Trabalho Total Estimado para o Projeto (horas):</label>
                         <input type="number" id="tempoTrabalhoProjeto" placeholder="Ex: 8">
-                        <label for="numeroEntregaveis">Número de Entregáveis:<span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Inserir texto explicativo aqui</span></span></label>
+                        <label for="numeroEntregaveis">Número de Entregáveis:</label>
                         <input type="number" id="numeroEntregaveis" placeholder="Ex: 40">
-                        <label for="tempoEdicaoEntregavel">Tempo Médio Gasto por Entregável (minutos):<span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Inserir texto explicativo aqui</span></span></label>
+                        <label for="tempoEdicaoEntregavel">Tempo Médio Gasto por Entregável (minutos):</label>
                         <input type="number" id="tempoEdicaoEntregavel" placeholder="Ex: 5">
                     </div>
                 </div>
                 <div>
                     <div class="section">
-                        <h3>Custos Adicionais Específicos do Projeto<span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Inserir texto explicativo aqui</span></span></h3>
+                        <h3>Custos Adicionais Específicos do Projeto</h3>
                         <div id="custosAdicionaisProjetoList"></div>
                         <button type="button" onclick="addCustoAdicionalProjetoItem()">Adicionar Custo Adicional</button>
                     </div>
