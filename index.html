@@ -170,6 +170,12 @@
         }
         .modal-header h2 { margin-top: 0; color: var(--modal-header-color); }
         .modal-body { max-height: 60vh; overflow-y: auto; padding-right: 15px; }
+        .modal-footer {
+            text-align: right; 
+            margin-top: 20px;
+            padding-top: 15px; 
+            border-top: 1px solid var(--section-border);
+        }
         .close-button {
             color: var(--text-color); opacity: 0.7;
             float: right; font-size: 28px; font-weight: bold;
@@ -219,6 +225,68 @@
             color: var(--input-text);
             font-size: 0.9em;
             vertical-align: middle;
+        }
+
+        /* Estilos de Impressão */
+        @media print {
+            body, .container, .modal-content {
+                background-color: #fff !important; /* Fundo branco para impressão */
+                color: #000 !important; /* Texto preto para impressão */
+                box-shadow: none !important;
+                margin: 0;
+                padding: 0;
+            }
+            .modal-header h2 {
+                color: #000 !important;
+            }
+            .modal {
+                position: static;
+                display: block !important; /* Mostrar o modal */
+                width: auto;
+                height: auto;
+                overflow: visible;
+            }
+            .modal-content {
+                border: none;
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                padding: 10px;
+            }
+            .modal-body {
+                max-height: none;
+                overflow-y: visible;
+                padding-right: 0;
+            }
+            .theme-selector-container, 
+            .tabs, 
+            .modal-footer button, /* Esconde botões no rodapé do modal */
+            .close-button, /* Esconde botão de fechar */
+            .tooltip-container, /* Esconde tooltips */
+            button:not(.print-button), /* Esconde outros botões que não sejam de imprimir */
+            #tabCustos,
+            #tabProjeto,
+            #tabHistorico,
+            h1, /* Esconde o título principal da página */
+            h2:not(.modal-header h2) /* Esconde H2s fora do modal header */
+            {
+                display: none !important;
+            }
+            .modal-header {
+                border-bottom: 1px solid #ccc;
+                margin-bottom: 15px;
+            }
+            .modal-footer {
+                display: none !important; /* Esconder o rodapé inteiro na impressão */
+            }
+            hr { 
+                border-top: 1px solid #ccc; 
+                margin: 10px 0;
+            }
+            p, strong, h4, h5, li {
+                color: #000 !important;
+            }
+            strong { font-weight: bold; }
         }
 
     </style>
@@ -378,8 +446,9 @@
             <div class="modal-body" id="modalBodyDetalhesProjeto">
                 <!-- Conteúdo dos detalhes será inserido aqui pelo JavaScript -->
             </div>
-            <div class="modal-footer" style="text-align: right; margin-top: 20px;">
-                 <button type="button" onclick="fecharModalDetalhes()">Fechar</button>
+            <div class="modal-footer">
+                 <button type="button" class="button-style" onclick="imprimirDetalhesProjeto()" style="margin-right:10px;">Imprimir</button>
+                 <button type="button" class="button-style" onclick="fecharModalDetalhes()">Fechar</button>
             </div>
         </div>
     </div>

@@ -471,6 +471,10 @@ function fecharModalDetalhes() {
     document.getElementById("modalDetalhesProjeto").style.display = "none";
 }
 
+function imprimirDetalhesProjeto() {
+    window.print();
+}
+
 // --- Inicialização ---
 document.addEventListener("DOMContentLoaded", () => {
     loadTheme(); // Carrega o tema salvo ou padrão
