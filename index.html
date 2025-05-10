@@ -5,147 +5,234 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Pricing - Ferramenta para Precificação</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
-        .container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1, h2, h3 { color: #333; }
-        label { display: block; margin-top: 10px; font-weight: bold; }
+        :root {
+            --body-bg: #f4f4f4;
+            --container-bg: #fff;
+            --text-color: #333;
+            --heading-color: #333;
+            --input-bg: #fff;
+            --input-border: #ddd;
+            --input-text: #333;
+            --button-bg: #007bff;
+            --button-text: black;
+            --button-hover-bg: #0056b3;
+            --section-bg: #f9f9f9;
+            --section-border: #eee;
+            --tab-bg: #f0f0f0;
+            --tab-border: #ddd;
+            --tab-active-bg: #007bff;
+            --tab-active-text: black;
+            --tab-active-border: #007bff;
+            --results-strong-color: #007bff;
+            --modal-content-bg: #fefefe;
+            --modal-header-color: #0056b3;
+            --tooltip-icon-bg: #007bff;
+            --tooltip-icon-text: white;
+            --tooltip-text-bg: #333;
+            --tooltip-text-color: #fff;
+            --link-color: #007bff;
+            --danger-button-bg: #dc3545;
+            --danger-button-hover-bg: #c82333;
+            --success-button-bg: #28a745;
+            --success-button-hover-bg: #218838;
+        }
+
+        body.theme-dark {
+            --body-bg: #1e1e1e;
+            --container-bg: #2c2c2c;
+            --text-color: #e0e0e0;
+            --heading-color: #f5f5f5;
+            --input-bg: #3a3a3a;
+            --input-border: #555;
+            --input-text: #e0e0e0;
+            --button-bg: #007bff; /* Manter azul para destaque */
+            --button-text: white;
+            --button-hover-bg: #0056b3;
+            --section-bg: #333333;
+            --section-border: #444;
+            --tab-bg: #3a3a3a;
+            --tab-border: #555;
+            --tab-active-bg: #007bff;
+            --tab-active-text: white;
+            --tab-active-border: #007bff;
+            --results-strong-color: #63a9ff; /* Azul mais claro para contraste */
+            --modal-content-bg: #2c2c2c;
+            --modal-header-color: #63a9ff;
+            --tooltip-icon-bg: #007bff;
+            --tooltip-icon-text: white;
+            --tooltip-text-bg: #4f4f4f;
+            --tooltip-text-color: #e0e0e0;
+            --link-color: #63a9ff;
+            --danger-button-bg: #c82333;
+            --danger-button-hover-bg: #a71d2a;
+            --success-button-bg: #218838;
+            --success-button-hover-bg: #19692c;
+        }
+
+        body {
+            font-family: sans-serif; margin: 20px; 
+            background-color: var(--body-bg); 
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container { 
+            background-color: var(--container-bg); 
+            padding: 20px; border-radius: 8px; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+        }
+        h1, h2, h3 { color: var(--heading-color); }
+        label { display: block; margin-top: 10px; font-weight: bold; color: var(--text-color);}
         input[type="text"], input[type="number"], input[type="date"], textarea {
             width: calc(100% - 22px);
             padding: 10px;
             margin-top: 5px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--input-text);
             border-radius: 4px;
             box-sizing: border-box;
         }
+        input[type="text"]::placeholder, 
+        input[type="number"]::placeholder, 
+        input[type="date"]::placeholder, 
+        textarea::placeholder {
+            color: var(--text-color);
+            opacity: 0.7;
+        }
         textarea { min-height: 60px; }
         button, .button-style {
-            background-color: #007bff; color: black; padding: 10px 15px; 
+            background-color: var(--button-bg); 
+            color: var(--button-text); 
+            padding: 10px 15px; 
             border: none; border-radius: 4px; cursor: pointer; margin-top: 15px; margin-right: 5px; text-decoration: none; display: inline-block;
         }
-        button:hover, .button-style:hover { background-color: #0056b3; }
-        .remove-btn { background-color: #dc3545; }
-        .remove-btn:hover { background-color: #c82333; }
-        .save-project-btn { background-color: #28a745; }
-        .save-project-btn:hover { background-color: #218838; }
+        button:hover, .button-style:hover { background-color: var(--button-hover-bg); }
+        
+        .remove-btn { background-color: var(--danger-button-bg); }
+        .remove-btn:hover { background-color: var(--danger-button-hover-bg); }
+        .save-project-btn { background-color: var(--success-button-bg); }
+        .save-project-btn:hover { background-color: var(--success-button-hover-bg); }
 
-        .results, .section { margin-top: 20px; padding: 15px; border: 1px solid #eee; border-radius: 4px; background-color: #f9f9f9; }
+        .results, .section { 
+            margin-top: 20px; padding: 15px; 
+            border: 1px solid var(--section-border); 
+            border-radius: 4px; 
+            background-color: var(--section-bg); 
+        }
         .results h3, .section h3 { margin-top: 0; }
         .results p { margin: 5px 0; }
-        .results strong { color: #007bff; }
-        .tabs { display: flex; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 2px solid #007bff; }
-        .tab-button { background-color: #f0f0f0; border: 1px solid #ddd; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-right: 5px; border-bottom: none; border-radius: 4px 4px 0 0; }
-        .tab-button.active { background-color: #007bff; color: black; border-color: #007bff; }
+        .results strong { color: var(--results-strong-color); }
+        
+        .tabs { display: flex; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 2px solid var(--tab-active-border); }
+        .tab-button { 
+            background-color: var(--tab-bg); 
+            border: 1px solid var(--tab-border); 
+            color: var(--text-color);
+            padding: 10px 20px; cursor: pointer; font-size: 16px; margin-right: 5px; border-bottom: none; border-radius: 4px 4px 0 0; 
+        }
+        .tab-button.active { 
+            background-color: var(--tab-active-bg); 
+            color: var(--tab-active-text); 
+            border-color: var(--tab-active-border); 
+        }
         .tab-content { display: none; padding-top: 10px;}
         .tab-content.active { display: block; }
+        
         .dynamic-list-item { display: flex; align-items: center; margin-bottom: 5px; }
         .dynamic-list-item input { flex-grow: 1; margin-right: 10px; }
+        
         .section-column { display: flex; flex-direction: column; gap: 20px; }
         @media (min-width: 768px) {
             .section-column { flex-direction: row; }
             .section-column > div { flex: 1; }
         }
 
-        /* Estilos para o Histórico de Projetos */
         #listaHistoricoProjetos .historico-item {
-            border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px; background-color: #fff;
+            border: 1px solid var(--section-border); padding: 15px; margin-bottom: 10px; border-radius: 5px; 
+            background-color: var(--container-bg); /* Usar cor do container para itens de lista */
             display: flex; flex-direction: column; gap: 5px;
         }
-        #listaHistoricoProjetos .historico-item h4 { margin-top: 0; margin-bottom: 10px; color: #0056b3; }
+        #listaHistoricoProjetos .historico-item h4 { margin-top: 0; margin-bottom: 10px; color: var(--modal-header-color); }
         #listaHistoricoProjetos .historico-item p { margin: 3px 0; font-size: 0.9em; }
         #listaHistoricoProjetos .historico-item-actions button {
             font-size: 0.8em; padding: 5px 10px; margin-top: 10px;
         }
 
-        /* Estilos para o Modal (Pop-up) */
         .modal {
-            display: none; /* Oculto por padrão */
-            position: fixed; /* Ficar fixo na tela */
-            z-index: 1000; /* Ficar na frente de tudo */
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            overflow: auto; /* Habilitar scroll se necessário */
-            background-color: rgba(0,0,0,0.6); /* Fundo preto com opacidade */
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; overflow: auto; 
+            background-color: rgba(0,0,0,0.7); /* Fundo do overlay mais escuro */
         }
         .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; /* 5% do topo e centralizado */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Poderia ser % ou px */
-            max-width: 700px;
-            border-radius: 8px;
-            position: relative;
+            background-color: var(--modal-content-bg);
+            margin: 5% auto; padding: 20px; border: 1px solid var(--input-border);
+            width: 80%; max-width: 700px; border-radius: 8px; position: relative;
         }
-        .modal-header h2 { margin-top: 0; color: #0056b3; }
+        .modal-header h2 { margin-top: 0; color: var(--modal-header-color); }
         .modal-body { max-height: 60vh; overflow-y: auto; padding-right: 15px; }
         .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            position: absolute;
-            top: 10px;
-            right: 20px;
+            color: var(--text-color); opacity: 0.7;
+            float: right; font-size: 28px; font-weight: bold;
+            position: absolute; top: 10px; right: 20px;
         }
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
+        .close-button:hover, .close-button:focus {
+            color: var(--heading-color); opacity: 1;
+            text-decoration: none; cursor: pointer;
         }
 
-        /* Estilos para Tooltip com Ícone */
         .tooltip-container {
-            position: relative;
-            display: inline-block;
-            margin-left: 8px; /* Espaçamento do elemento ao qual está anexado */
-            vertical-align: middle; /* Alinha o ícone com o texto ao lado */
+            position: relative; display: inline-block; margin-left: 8px; vertical-align: middle;
         }
         .tooltip-icon {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background-color: #007bff; /* Cor azul */
-            color: white;
-            text-align: center;
-            font-size: 12px;
-            line-height: 18px; /* Centraliza o '?' verticalmente */
-            font-weight: bold;
-            cursor: help;
+            display: inline-block; width: 18px; height: 18px; border-radius: 50%;
+            background-color: var(--tooltip-icon-bg); color: var(--tooltip-icon-text);
+            text-align: center; font-size: 12px; line-height: 18px; font-weight: bold; cursor: help;
         }
         .tooltip-text {
-            visibility: hidden;
-            width: 220px; /* Largura do tooltip */
-            background-color: #333; /* Cor de fundo do tooltip (mais escura) */
-            color: #fff;
-            text-align: left;
-            border-radius: 6px;
-            padding: 10px;
-            position: absolute;
-            z-index: 1001; /* Acima de outros elementos */
-            bottom: 135%; /* Posição acima do ícone */
-            left: 50%;
-            margin-left: -110px; /* Metade da largura para centralizar */
-            opacity: 0;
-            transition: opacity 0.2s ease-in-out;
-            font-size: 0.88em;
-            font-weight: normal;
-            line-height: 1.5;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            visibility: hidden; width: 220px; 
+            background-color: var(--tooltip-text-bg); color: var(--tooltip-text-color);
+            text-align: left; border-radius: 6px; padding: 10px; position: absolute;
+            z-index: 1001; bottom: 135%; left: 50%; margin-left: -110px; 
+            opacity: 0; transition: opacity 0.2s ease-in-out;
+            font-size: 0.88em; font-weight: normal; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        .tooltip-container:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
+        .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }
+        h3 .tooltip-text { font-weight: normal; }
+
+        /* Seletor de Tema */
+        .theme-selector-container {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            z-index: 1002; /* Acima do modal */
         }
-        /* Ajuste para h3 não herdar bold no tooltip-text */
-        h3 .tooltip-text {
-            font-weight: normal;
+        .theme-selector-container label {
+            margin-right: 5px;
+            font-size: 0.9em;
+            vertical-align: middle;
+        }
+        .theme-selector-container select {
+            padding: 5px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            font-size: 0.9em;
+            vertical-align: middle;
         }
 
     </style>
 </head>
 <body>
+    <div class="theme-selector-container">
+        <label for="themeSelector">Tema:</label>
+        <select id="themeSelector">
+            <option value="light">Claro</option>
+            <option value="dark">Escuro</option>
+            <option value="auto">Automático</option>
+        </select>
+    </div>
+
     <div class="container">
         <h1>Smart Pricing - Ferramenta para Precificação</h1>
 
