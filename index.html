@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="pageTitle">Smart Pricing - Ferramenta para Precificação</title>
-    <script src="https://unpkg.com/i18next/i18next.min.js"></script>
-    <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
-    <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+    <title>Smart Pricing - Ferramenta para Precificação</title>
     <style>
         :root {
             --body-bg: #f4f4f4;
@@ -48,7 +45,7 @@
             --input-bg: #3a3a3a;
             --input-border: #555;
             --input-text: #e0e0e0;
-            --button-bg: #007bff; 
+            --button-bg: #007bff; /* Manter azul para destaque */
             --button-text: white;
             --button-hover-bg: #0056b3;
             --section-bg: #333333;
@@ -58,7 +55,7 @@
             --tab-active-bg: #007bff;
             --tab-active-text: white;
             --tab-active-border: #007bff;
-            --results-strong-color: #63a9ff; 
+            --results-strong-color: #63a9ff; /* Azul mais claro para contraste */
             --modal-content-bg: #2c2c2c;
             --modal-header-color: #63a9ff;
             --tooltip-icon-bg: #007bff;
@@ -152,7 +149,7 @@
 
         #listaHistoricoProjetos .historico-item {
             border: 1px solid var(--section-border); padding: 15px; margin-bottom: 10px; border-radius: 5px; 
-            background-color: var(--container-bg); 
+            background-color: var(--container-bg); /* Usar cor do container para itens de lista */
             display: flex; flex-direction: column; gap: 5px;
         }
         #listaHistoricoProjetos .historico-item h4 { margin-top: 0; margin-bottom: 10px; color: var(--modal-header-color); }
@@ -164,7 +161,7 @@
         .modal {
             display: none; position: fixed; z-index: 1000; left: 0; top: 0;
             width: 100%; height: 100%; overflow: auto; 
-            background-color: rgba(0,0,0,0.7); 
+            background-color: rgba(0,0,0,0.7); /* Fundo do overlay mais escuro */
         }
         .modal-content {
             background-color: var(--modal-content-bg);
@@ -208,25 +205,19 @@
         .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }
         h3 .tooltip-text { font-weight: normal; }
 
-        .top-controls-container {
+        /* Seletor de Tema */
+        .theme-selector-container {
             position: fixed;
             top: 10px;
             right: 20px;
-            z-index: 1002; 
-            display: flex;
-            gap: 15px;
+            z-index: 1002; /* Acima do modal */
         }
-        .theme-selector-container, .language-selector-container {
-            display: flex;
-            align-items: center;
-        }
-        .theme-selector-container label, .language-selector-container label {
+        .theme-selector-container label {
             margin-right: 5px;
             font-size: 0.9em;
             vertical-align: middle;
-            color: var(--text-color);
         }
-        .theme-selector-container select, .language-selector-container select {
+        .theme-selector-container select {
             padding: 5px 8px;
             border-radius: 4px;
             border: 1px solid var(--input-border);
@@ -236,10 +227,11 @@
             vertical-align: middle;
         }
 
+        /* Estilos de Impressão */
         @media print {
             body, .container, .modal-content {
-                background-color: #fff !important; 
-                color: #000 !important; 
+                background-color: #fff !important; /* Fundo branco para impressão */
+                color: #000 !important; /* Texto preto para impressão */
                 box-shadow: none !important;
                 margin: 0;
                 padding: 0;
@@ -249,7 +241,7 @@
             }
             .modal {
                 position: static;
-                display: block !important; 
+                display: block !important; /* Mostrar o modal */
                 width: auto;
                 height: auto;
                 overflow: visible;
@@ -266,17 +258,17 @@
                 overflow-y: visible;
                 padding-right: 0;
             }
-            .top-controls-container, 
+            .theme-selector-container, 
             .tabs, 
-            .modal-footer button:not(.print-button), 
-            .close-button, 
-            .tooltip-container, 
-            button:not(.print-button), 
+            .modal-footer button, /* Esconde botões no rodapé do modal */
+            .close-button, /* Esconde botão de fechar */
+            .tooltip-container, /* Esconde tooltips */
+            button:not(.print-button), /* Esconde outros botões que não sejam de imprimir */
             #tabCustos,
             #tabProjeto,
             #tabHistorico,
-            h1:not(#modalNomeProjetoSalvo), 
-            h2:not(.modal-header h2) 
+            h1, /* Esconde o título principal da página */
+            h2:not(.modal-header h2) /* Esconde H2s fora do modal header */
             {
                 display: none !important;
             }
@@ -285,7 +277,7 @@
                 margin-bottom: 15px;
             }
             .modal-footer {
-                display: none !important; 
+                display: none !important; /* Esconder o rodapé inteiro na impressão */
             }
             hr { 
                 border-top: 1px solid #ccc; 
@@ -300,156 +292,146 @@
     </style>
 </head>
 <body>
-    <div class="top-controls-container">
-        <div class="theme-selector-container">
-            <label for="themeSelector" data-i18n="labels.theme">Tema:</label>
-            <select id="themeSelector">
-                <option value="light" data-i18n="themeOptions.light">Claro</option>
-                <option value="dark" data-i18n="themeOptions.dark">Escuro</option>
-                <option value="auto" data-i18n="themeOptions.auto">Automático</option>
-            </select>
-        </div>
-        <div class="language-selector-container">
-            <label for="languageSelector" data-i18n="labels.language">Idioma:</label>
-            <select id="languageSelector">
-                <option value="pt-BR">Português (BR)</option>
-                <option value="en">English</option>
-                <option value="es">Español</option>
-            </select>
-        </div>
+    <div class="theme-selector-container">
+        <label for="themeSelector">Tema:</label>
+        <select id="themeSelector">
+            <option value="light">Claro</option>
+            <option value="dark">Escuro</option>
+            <option value="auto">Automático</option>
+        </select>
     </div>
 
     <div class="container">
-        <h1 data-i18n="mainTitle">Smart Pricing - Ferramenta para Precificação</h1>
+        <h1>Smart Pricing - Ferramenta para Precificação</h1>
 
         <div class="tabs">
-            <button class="tab-button active" onclick="openTab(event, 'tabCustos')" data-i18n="tabs.configCustos">1. Configurar Custos Fixos</button>
-            <button class="tab-button" onclick="openTab(event, 'tabProjeto')" data-i18n="tabs.calculateProject">2. Calcular Projeto</button>
-            <button class="tab-button" onclick="openTab(event, 'tabHistorico')" data-i18n="tabs.projectHistory">3. Histórico de Projetos</button>
+            <button class="tab-button active" onclick="openTab(event, 'tabCustos')">1. Configurar Custos Fixos</button>
+            <button class="tab-button" onclick="openTab(event, 'tabProjeto')">2. Calcular Projeto</button>
+            <button class="tab-button" onclick="openTab(event, 'tabHistorico')">3. Histórico de Projetos</button>
         </div>
 
         <!-- Seção 1: Configuração de Custos Fixos -->
         <div id="tabCustos" class="tab-content active">
-            <h2 data-i18n="tabCustos.title">Configuração de Custos Fixos e Parâmetros Gerais</h2>
+            <h2>Configuração de Custos Fixos e Parâmetros Gerais</h2>
             <div class="section-column">
                 <div>
                     <div class="section">
-                        <h3><span data-i18n="tabCustos.personalCostsTitle">Custos Pessoais Mensais</span> <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text" data-i18n="tooltips.personalCosts">São os gastos que você tem para manter o seu estilo de vida e o bem-estar da sua família. São despesas que você precisa cobrir independentemente de estar trabalhando ou não. Exemplos: Aluguel ou prestação da casa, condomínio, IPTU, luz, água, gás, internet, telefone, Alimentação, etc.</span></span></h3>
+                        <h3>Custos Pessoais Mensais <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">São os gastos que você tem para manter o seu estilo de vida e o bem-estar da sua família. São despesas que você precisa cobrir independentemente de estar trabalhando ou não. Exemplos: Aluguel ou prestação da casa, condomínio, IPTU, luz, água, gás, internet, telefone, Alimentação, etc.</span></span></h3>
                         <div id="custosPessoaisList"></div>
-                        <button type="button" onclick="addCustoPessoalItem()" data-i18n="buttons.addPersonalCost">Adicionar Custo Pessoal</button>
+                        <button type="button" onclick="addCustoPessoalItem()">Adicionar Custo Pessoal</button>
                     </div>
                     <div class="section">
-                        <h3><span data-i18n="tabCustos.companyCostsTitle">Custos da Empresa Mensais</span> <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text" data-i18n="tooltips.companyCosts">São os gastos que você tem diretamente relacionados ao funcionamento do seu negócio. Exemplos: Programas de edição de vídeo e foto, ferramentas de design, armazenamento em nuvem, domínio, hospedagem, anúncios pagos, impulsionamento de posts, plano de celular, internet, MEI, contador, taxas administrativas, papel, caneta, equipamentos de escritório.</span></span></h3>
-                        <label for="salarioProLabore"><span data-i18n="labels.desiredSalary">Salário (Pró-labore) Desejado:</span> <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text" data-i18n="tooltips.desiredSalary">Valor que você deseja retirar da sua empresa pelo seu trabalho.</span></span></label>
-                        <input type="number" id="salarioProLabore" data-i18n-placeholder="placeholders.exampleSalary">
+                        <h3>Custos da Empresa Mensais <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">São os gastos que você tem diretamente relacionados ao funcionamento do seu negócio. Exemplos: Programas de edição de vídeo e foto, ferramentas de design, armazenamento em nuvem, domínio, hospedagem, anúncios pagos, impulsionamento de posts, plano de celular, internet, MEI, contador, taxas administrativas, papel, caneta, equipamentos de escritório.</span></span></h3>
+                        <label for="salarioProLabore">Salário (Pró-labore) Desejado: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Valor que você deseja retirar da sua empresa pelo seu trabalho.</span></span></label>
+                        <input type="number" id="salarioProLabore" placeholder="Ex: 3000">
                         <div id="custosEmpresaList"></div>
-                        <button type="button" onclick="addCustoEmpresaItem()" data-i18n="buttons.addCompanyCost">Adicionar Custo da Empresa</button>
+                        <button type="button" onclick="addCustoEmpresaItem()">Adicionar Custo da Empresa</button>
                     </div>
                 </div>
                 <div>
                     <div class="section">
-                        <h3><span data-i18n="tabCustos.equipmentTitle">Equipamentos</span> <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text" data-i18n="tooltips.equipment">São todos os itens que você usa diretamente na execução do seu ofício. Exemplos: Câmera, Lentes, Iluminação, Laptop, Computadores, Monitores, Tablets, Impressora.</span></span></h3>
+                        <h3>Equipamentos <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">São todos os itens que você usa diretamente na execução do seu ofício. Exemplos: Câmera, Lentes, Iluminação, Laptop, Computadores, Monitores, Tablets, Impressora.</span></span></h3>
                         <div id="equipamentosList"></div>
-                        <button type="button" onclick="addEquipamentoItem()" data-i18n="buttons.addEquipment">Adicionar Equipamento</button>
+                        <button type="button" onclick="addEquipamentoItem()">Adicionar Equipamento</button>
                     </div>
                     <div class="section">
-                        <h3 data-i18n="tabCustos.workFinancialParamsTitle">Parâmetros de Trabalho e Financeiros</h3>
-                        <label for="diasTrabalhadosMes"><span data-i18n="labels.workDaysPerMonth">Dias Trabalhados no Mês:</span> <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text" data-i18n="tooltips.workDaysPerMonth">Quantidade de dias que você pretende se dedicar ao trabalho a cada mês.</span></span></label>
-                        <input type="number" id="diasTrabalhadosMes" data-i18n-placeholder="placeholders.exampleWorkDays">
-                        <label for="horasTrabalhoDia"><span data-i18n="labels.workHoursPerDay">Horas de Trabalho por Dia:</span> <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text" data-i18n="tooltips.workHoursPerDay">Quantidade de horas que você pretende se dedicar ao trabalho a cada dia.</span></span></label>
-                        <input type="number" id="horasTrabalhoDia" data-i18n-placeholder="placeholders.exampleWorkHours">
-                        <label for="percentualGastosOcasionais"><span data-i18n="labels.occasionalExpensesPercentage">Percentual para Gastos Ocasionais (%):</span> <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text" data-i18n="tooltips.occasionalExpensesPercentage">Reserva de emergencia para gastos não previstos. Exemplos: Pendrive não funciona e precisa ser trocado. Pneu furou no caminho para o trabalho. Falta de material em um fornecedor barato sendo necessário contatar um fornecedor mais caro.</span></span></label>
-                        <input type="number" id="percentualGastosOcasionais" data-i18n-placeholder="placeholders.examplePercentage" value="10">
+                        <h3>Parâmetros de Trabalho e Financeiros</h3>
+                        <label for="diasTrabalhadosMes">Dias Trabalhados no Mês: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Quantidade de dias que você pretende se dedicar ao trabalho a cada mês.</span></span></label>
+                        <input type="number" id="diasTrabalhadosMes" placeholder="Ex: 22">
+                        <label for="horasTrabalhoDia">Horas de Trabalho por Dia: <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Quantidade de horas que você pretende se dedicar ao trabalho a cada dia.</span></span></label>
+                        <input type="number" id="horasTrabalhoDia" placeholder="Ex: 8">
+                        <label for="percentualGastosOcasionais">Percentual para Gastos Ocasionais (%): <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Reserva de emergencia para gastos não previstos. Exemplos: Pendrive não funciona e precisa ser trocado. Pneu furou no caminho para o trabalho. Falta de material em um fornecedor barato sendo necessário contatar um fornecedor mais caro.</span></span></label>
+                        <input type="number" id="percentualGastosOcasionais" placeholder="Ex: 10" value="10">
                     </div>
                 </div>
             </div>
-            <button type="button" onclick="calcularCustosFixos()" data-i18n="buttons.calculateUpdateFixedCosts">Calcular/Atualizar Custos Fixos</button>
+            <button type="button" onclick="calcularCustosFixos()">Calcular/Atualizar Custos Fixos</button>
             <div class="results" id="resultadosCustosFixos" style="display:none;">
-                <h3 data-i18n="results.fixedCostsTitle">Resultados dos Custos Fixos (Mensal)</h3>
-                <p><span data-i18n="results.totalPersonalCosts">Total de Custos Pessoais:</span> <strong id="resTotalCustosPessoais">R$ 0.00</strong></p>
-                <p><span data-i18n="results.totalCompanyCosts">Total de Custos da Empresa (c/ Pró-labore, 13º, Férias):</span> <strong id="resTotalCustosEmpresa">R$ 0.00</strong></p>
-                <p><span data-i18n="results.totalEquipmentValue">Valor Total dos Equipamentos:</span> <strong id="resTotalValorEquipamentos">R$ 0.00</strong></p>
-                <p><span data-i18n="results.monthlyDepreciation">Depreciação dos Equipamentos:</span> <strong id="resDepreciacaoMensal">R$ 0.00</strong></p>
-                <p><span data-i18n="results.estimatedDailyRate">Valor da Diária Estimado:</span> <strong id="resValorDiaria">R$ 0.00</strong></p>
-                <p><span data-i18n="results.estimatedBaseHourCost">Custo/Hora Base Estimado:</span> <strong id="resCustoHoraBase">R$ 0.00</strong></p>
-                <p><span data-i18n="results.totalEstimatedMonthlyCost">Gasto Total Estimado (c/ Gastos Ocasionais):</span> <strong id="resGastoMensalTotal">R$ 0.00</strong></p>
+                <h3>Resultados dos Custos Fixos (Mensal)</h3>
+                <p>Total de Custos Pessoais: <strong id="resTotalCustosPessoais">R$ 0.00</strong></p>
+                <p>Total de Custos da Empresa (c/ Pró-labore, 13º, Férias): <strong id="resTotalCustosEmpresa">R$ 0.00</strong></p>
+                <p>Valor Total dos Equipamentos: <strong id="resTotalValorEquipamentos">R$ 0.00</strong></p>
+                <p>Depreciação dos Equipamentos: <strong id="resDepreciacaoMensal">R$ 0.00</strong></p>
+                <p>Valor da Diária Estimado: <strong id="resValorDiaria">R$ 0.00</strong></p>
+                <p>Custo/Hora Base Estimado: <strong id="resCustoHoraBase">R$ 0.00</strong></p>
+                <p>Gasto Total Estimado (c/ Gastos Ocasionais): <strong id="resGastoMensalTotal">R$ 0.00</strong></p>
             </div>
         </div>
 
         <!-- Seção 2: Calculadora de Projeto -->
         <div id="tabProjeto" class="tab-content">
-            <h2 data-i18n="tabProject.title">Calculadora de Projeto Específico</h2>
+            <h2>Calculadora de Projeto Específico</h2>
             <div class="section-column">
                 <div>
                     <div class="section">
-                        <h3 data-i18n="tabProject.projectInfoTitle">Informações do Projeto</h3>
-                        <label for="nomeContratante" data-i18n="labels.clientName">Nome do Contratante:</label>
-                        <input type="text" id="nomeContratante" data-i18n-placeholder="placeholders.clientName">
-                        <label for="dataProjeto" data-i18n="labels.projectDate">Data do Projeto:</label>
+                        <h3>Informações do Projeto</h3>
+                        <label for="nomeContratante">Nome do Contratante:</label>
+                        <input type="text" id="nomeContratante" placeholder="Nome do cliente">
+                        <label for="dataProjeto">Data do Projeto:</label>
                         <input type="date" id="dataProjeto">
-                        <label for="descricaoProjeto" data-i18n="labels.projectDescription">Descrição Detalhada do Projeto:</label>
-                        <textarea id="descricaoProjeto" data-i18n-placeholder="placeholders.projectDetails"></textarea>
+                        <label for="descricaoProjeto">Descrição Detalhada do Projeto:</label>
+                        <textarea id="descricaoProjeto" placeholder="Detalhes do job"></textarea>
                     </div>
                     <div class="section">
-                        <h3 data-i18n="tabProject.timeDeliverablesTitle">Tempo e Entregáveis</h3>
-                        <label for="tempoTrabalhoProjeto"><span data-i18n="labels.estimatedProjectWorkTime">Tempo de Trabalho Total Estimado para o Projeto (horas):</span><span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text" data-i18n="tooltips.estimatedProjectWorkTime">Tempo necessário para executar o trabalho. Não esquecer de adicionar o tempo de deslocamento</span></span></label>
-                        <input type="number" id="tempoTrabalhoProjeto" data-i18n-placeholder="placeholders.exampleHours">
-                        <label for="numeroEntregaveis"><span data-i18n="labels.numberOfDeliverables">Número de Entregáveis:</span><span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text" data-i18n="tooltips.numberOfDeliverables">Número de fotos, vídeos, aulas que serão entregues ao cliente</span></span></label>
-                        <input type="number" id="numeroEntregaveis" data-i18n-placeholder="placeholders.exampleQuantity">
-                        <label for="tempoEdicaoEntregavel"><span data-i18n="labels.avgTimePerDeliverable">Tempo Médio Gasto por Entregável (minutos):</span><span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text" data-i18n="tooltips.avgTimePerDeliverable">Tempo gasto em cada entregável. Seja ele foto, video, aula, etc.</span></span></label>
-                        <input type="number" id="tempoEdicaoEntregavel" data-i18n-placeholder="placeholders.exampleMinutes">
+                        <h3>Tempo e Entregáveis</h3>
+                        <label for="tempoTrabalhoProjeto">Tempo de Trabalho Total Estimado para o Projeto (horas):<span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Tempo necessário para executar o trabalho. Não esquecer de adicionar o tempo de deslocamento</span></span></label>
+                        <input type="number" id="tempoTrabalhoProjeto" placeholder="Ex: 8">
+                        <label for="numeroEntregaveis">Número de Entregáveis:<span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Número de fotos, vídeos, aulas que serão entregues ao cliente</span></span></label>
+                        <input type="number" id="numeroEntregaveis" placeholder="Ex: 40">
+                        <label for="tempoEdicaoEntregavel">Tempo Médio Gasto por Entregável (minutos):<span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Tempo gasto em cada entregável. Seja ele foto, video, aula, etc.</span></span></label>
+                        <input type="number" id="tempoEdicaoEntregavel" placeholder="Ex: 5">
                     </div>
                 </div>
                 <div>
                     <div class="section">
-                        <h3><span data-i18n="tabProject.additionalCostsTitle">Custos Adicionais Específicos do Projeto</span><span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text" data-i18n="tooltips.additionalCosts">Custos que se aplicam exclusivamente a esse projeto. Exemplo: deslocamento, alimentação, aluguel de lente, ajudante, impressão de álbum, etc.</span></span></h3>
+                        <h3>Custos Adicionais Específicos do Projeto<span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Custos que se aplicam exclusivamente a esse projeto. Exemplo: deslocamento, alimentação, aluguel de lente, ajudante, impressão de álbum, etc.</span></span></h3>
                         <div id="custosAdicionaisProjetoList"></div>
-                        <button type="button" onclick="addCustoAdicionalProjetoItem()" data-i18n="buttons.addAdditionalCost">Adicionar Custo Adicional</button>
+                        <button type="button" onclick="addCustoAdicionalProjetoItem()">Adicionar Custo Adicional</button>
                     </div>
                     <div class="section">
-                        <h3 data-i18n="tabProject.financialParamsTitle">Parâmetros Financeiros do Projeto</h3>
-                        <label for="percentualLucro" data-i18n="labels.desiredProfitPercentage">Percentual de Lucro Desejado sobre o Custo (%):</label>
-                        <input type="number" id="percentualLucro" data-i18n-placeholder="placeholders.examplePercentage" value="30">
-                        <label for="percentualImpostos" data-i18n="labels.taxPercentage">Percentual de Impostos sobre o Faturamento (%):</label>
-                        <input type="number" id="percentualImpostos" data-i18n-placeholder="placeholders.examplePercentage" value="6">
-                        <label for="taxaCartao" data-i18n="labels.cardFeePercentage">Taxa da Operadora de Cartão (%):</label>
-                        <input type="number" id="taxaCartao" data-i18n-placeholder="placeholders.exampleCardFee">
+                        <h3>Parâmetros Financeiros do Projeto</h3>
+                        <label for="percentualLucro">Percentual de Lucro Desejado sobre o Custo (%):</label>
+                        <input type="number" id="percentualLucro" placeholder="Ex: 30" value="30">
+                        <label for="percentualImpostos">Percentual de Impostos sobre o Faturamento (%):</label>
+                        <input type="number" id="percentualImpostos" placeholder="Ex: 6" value="6">
+                        <label for="taxaCartao">Taxa da Operadora de Cartão (%):</label>
+                        <input type="number" id="taxaCartao" placeholder="Ex: 4.5">
                     </div>
                 </div>
             </div>
-            <button type="button" onclick="calcularPrecoProjeto()" data-i18n="buttons.calculateProjectPrice">Calcular Preço do Projeto</button>
-            <button type="button" class="save-project-btn" onclick="salvarProjetoNoHistorico()" style="margin-left: 10px;" data-i18n="buttons.saveCurrentProject">Salvar Projeto Atual</button>
+            <button type="button" onclick="calcularPrecoProjeto()">Calcular Preço do Projeto</button>
+            <button type="button" class="save-project-btn" onclick="salvarProjetoNoHistorico()" style="margin-left: 10px;">Salvar Projeto Atual</button>
 
             <div class="results" id="resultadosProjeto" style="display:none;">
-                <h3 data-i18n="results.projectResultsTitle">Resultados do Projeto</h3>
-                <p><span data-i18n="results.totalAllocatedCost">Custo Total Alocado ao Projeto:</span> <strong id="resCustoTotalAlocadoProjeto">R$ 0.00</strong></p>
-                <p><span data-i18n="results.calculatedProfit">Valor do Lucro Calculado:</span> <strong id="resLucroProjeto">R$ 0.00</strong></p>
-                <p><span data-i18n="results.estimatedTaxes">Valor dos Impostos Estimados:</span> <strong id="resImpostosProjeto">R$ 0.00</strong></p>
-                <p><strong><span data-i18n="results.suggestedPricePix">Preço Sugerido (PIX/À Vista):</span> <strong id="resPrecoPix">R$ 0.00</strong></strong></p>
-                <p><strong><span data-i18n="results.suggestedPriceCard">Preço Sugerido (Cartão):</span> <strong id="resPrecoCartao">R$ 0.00</strong></strong></p>
-                <h4 data-i18n="results.detailedFinancialSummary">Resumo Financeiro Detalhado:</h4>
-                <p><span data-i18n="results.summaryPersonalCost">Parcela do Custo Pessoal:</span> <strong id="resResumoCustoPessoal">R$ 0.00</strong></p>
-                <p><span data-i18n="results.summaryCompanyCost">Parcela do Custo da Empresa:</span> <strong id="resResumoCustoEmpresa">R$ 0.00</strong></p>
-                <p><span data-i18n="results.summarySalary">Parcela do Salário (Pró-labore):</span> <strong id="resResumoSalario">R$ 0.00</strong></p>
-                <p><span data-i18n="results.summary13th">Parcela do 13º:</span> <strong id="resResumo13">R$ 0.00</strong></p>
-                <p><span data-i18n="results.summaryVacation">Parcela das Férias:</span> <strong id="resResumoFerias">R$ 0.00</strong></p>
-                <p><span data-i18n="results.summaryDepreciation">Parcela da Depreciação:</span> <strong id="resResumoDepreciacao">R$ 0.00</strong></p>
-                <p><span data-i18n="results.summaryOccasionalExpenses">Parcela dos Gastos Ocasionais:</span> <strong id="resResumoGastosOcasionais">R$ 0.00</strong></p>
-                <p><span data-i18n="results.summaryAdditionalProjectCosts">Soma dos Custos Adicionais do Projeto:</span> <strong id="resResumoCustosAdicionais">R$ 0.00</strong></p>
-                <p><span data-i18n="results.summaryProjectProfit">Lucro do Projeto:</span> <strong id="resResumoLucro">R$ 0.00</strong></p>
-                <p><span data-i18n="results.summaryProjectTaxes">Impostos do Projeto:</span> <strong id="resResumoImpostos">R$ 0.00</strong></p>
-                <p><span data-i18n="results.projectsNeededMonthly">Para cobrir seus custos mensais, você precisaria de aproximadamente</span> <strong id="resProjetosNecessariosMes">0</strong> <span data-i18n="results.projectsLikeThisInMonth">projetos como este no mês.</span></p>
-                <h4 data-i18n="results.optionalsTitle">Opcionais:</h4>
-                <p><span data-i18n="results.pricePerAdditionalDeliverable">Preço Sugerido por Entregável Adicional:</span> <strong id="resPrecoEntregavelAdicional">R$ 0.00</strong></p>
-                <p><span data-i18n="results.pricePerAdditionalHour">Preço Sugerido por Hora Adicional de Trabalho:</span> <strong id="resPrecoHoraAdicional">R$ 0.00</strong></p>
+                <h3>Resultados do Projeto</h3>
+                <p>Custo Total Alocado ao Projeto: <strong id="resCustoTotalAlocadoProjeto">R$ 0.00</strong></p>
+                <p>Valor do Lucro Calculado: <strong id="resLucroProjeto">R$ 0.00</strong></p>
+                <p>Valor dos Impostos Estimados: <strong id="resImpostosProjeto">R$ 0.00</strong></p>
+                <p><strong>Preço Sugerido (PIX/À Vista): <strong id="resPrecoPix">R$ 0.00</strong></strong></p>
+                <p><strong>Preço Sugerido (Cartão): <strong id="resPrecoCartao">R$ 0.00</strong></strong></p>
+                <h4>Resumo Financeiro Detalhado:</h4>
+                <p>Parcela do Custo Pessoal: <strong id="resResumoCustoPessoal">R$ 0.00</strong></p>
+                <p>Parcela do Custo da Empresa: <strong id="resResumoCustoEmpresa">R$ 0.00</strong></p>
+                <p>Parcela do Salário (Pró-labore): <strong id="resResumoSalario">R$ 0.00</strong></p>
+                <p>Parcela do 13º: <strong id="resResumo13">R$ 0.00</strong></p>
+                <p>Parcela das Férias: <strong id="resResumoFerias">R$ 0.00</strong></p>
+                <p>Parcela da Depreciação: <strong id="resResumoDepreciacao">R$ 0.00</strong></p>
+                <p>Parcela dos Gastos Ocasionais: <strong id="resResumoGastosOcasionais">R$ 0.00</strong></p>
+                <p>Soma dos Custos Adicionais do Projeto: <strong id="resResumoCustosAdicionais">R$ 0.00</strong></p>
+                <p>Lucro do Projeto: <strong id="resResumoLucro">R$ 0.00</strong></p>
+                <p>Impostos do Projeto: <strong id="resResumoImpostos">R$ 0.00</strong></p>
+                <p>Para cobrir seus custos mensais, você precisaria de aproximadamente <strong id="resProjetosNecessariosMes">0</strong> projetos como este no mês.</p>
+                <h4>Opcionais:</h4>
+                <p>Preço Sugerido por Entregável Adicional: <strong id="resPrecoEntregavelAdicional">R$ 0.00</strong></p>
+                <p>Preço Sugerido por Hora Adicional de Trabalho: <strong id="resPrecoHoraAdicional">R$ 0.00</strong></p>
             </div>
         </div>
 
         <!-- Seção 3: Histórico de Projetos -->
         <div id="tabHistorico" class="tab-content">
-            <h2 data-i18n="tabHistory.title">Histórico de Projetos Salvos</h2>
+            <h2>Histórico de Projetos Salvos</h2>
             <div id="listaHistoricoProjetos" class="section">
-                <p data-i18n="tabHistory.noProjectsSaved">Nenhum projeto salvo ainda.</p> 
+                <p>Nenhum projeto salvo ainda.</p> 
             </div>
         </div>
     </div>
@@ -459,14 +441,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <span class="close-button" onclick="fecharModalDetalhes()">&times;</span>
-                <h2 id="modalNomeProjetoSalvo" data-i18n="projectDetailsModal.title">Detalhes do Projeto</h2>
+                <h2 id="modalNomeProjetoSalvo">Detalhes do Projeto</h2>
             </div>
             <div class="modal-body" id="modalBodyDetalhesProjeto">
                 <!-- Conteúdo dos detalhes será inserido aqui pelo JavaScript -->
             </div>
             <div class="modal-footer">
-                 <button type="button" class="button-style print-button" onclick="imprimirDetalhesProjeto()" style="margin-right:10px;" data-i18n="buttons.print">Imprimir</button>
-                 <button type="button" class="button-style" onclick="fecharModalDetalhes()" data-i18n="buttons.close">Fechar</button>
+                 <button type="button" class="button-style" onclick="imprimirDetalhesProjeto()" style="margin-right:10px;">Imprimir</button>
+                 <button type="button" class="button-style" onclick="fecharModalDetalhes()">Fechar</button>
             </div>
         </div>
     </div>

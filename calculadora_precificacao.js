@@ -2,702 +2,21 @@
 let GLOBAIS_CUSTOS_FIXOS = {
     totalCustosPessoais: 0,
     salarioProLabore: 0,
-    totalCustosEmpresaBase: 0,
-    totalCustosEmpresaCompleto: 0,
+    totalCustosEmpresaBase: 0, // Sem pró-labore, 13º, férias
+    totalCustosEmpresaCompleto: 0, // Com pró-labore, 13º, férias
     totalValorEquipamentos: 0,
     depreciacaoMensal: 0,
     gastoMensalTotal: 0,
     valorDiaria: 0,
     custoHoraBase: 0,
-    percentualGastosOcasionais: 0.10,
+    percentualGastosOcasionais: 0.10, // Default 10%
     diasTrabalhadosMes: 0,
     horasTrabalhoDia: 0
 };
 
-const APP_DATA_KEY = "smartPricingAppData_v2";
-const HISTORICO_PROJETOS_KEY = "smartPricingHistoricoProjetos_v2";
-const THEME_KEY = "smartPricingTheme";
-const I18N_LANG_KEY = "i18nextLng"; 
-
-// --- i18next Resources (Embedded Translations) ---
-const i18nextResources = {
-    "pt-BR": {
-        translation: {
-            "pageTitle": "Smart Pricing - Ferramenta para Precificação",
-            "mainTitle": "Smart Pricing - Ferramenta para Precificação",
-            "labels": {
-                "theme": "Tema:",
-                "language": "Idioma:",
-                "desiredSalary": "Salário (Pró-labore) Desejado:",
-                "workDaysPerMonth": "Dias Trabalhados no Mês:",
-                "workHoursPerDay": "Horas de Trabalho por Dia:",
-                "occasionalExpensesPercentage": "Percentual para Gastos Ocasionais (%):",
-                "clientName": "Nome do Contratante:",
-                "projectDate": "Data do Projeto:",
-                "projectDescription": "Descrição Detalhada do Projeto:",
-                "estimatedProjectWorkTime": "Tempo de Trabalho Total Estimado para o Projeto (horas):",
-                "numberOfDeliverables": "Número de Entregáveis:",
-                "avgTimePerDeliverable": "Tempo Médio Gasto por Entregável (minutos):",
-                "desiredProfitPercentage": "Percentual de Lucro Desejado sobre o Custo (%):",
-                "taxPercentage": "Percentual de Impostos sobre o Faturamento (%):",
-                "cardFeePercentage": "Taxa da Operadora de Cartão (%):"
-            },
-            "themeOptions": {
-                "light": "Claro",
-                "dark": "Escuro",
-                "auto": "Automático"
-            },
-            "tabs": {
-                "configCustos": "1. Configurar Custos Fixos",
-                "calculateProject": "2. Calcular Projeto",
-                "projectHistory": "3. Histórico de Projetos"
-            },
-            "tabCustos": {
-                "title": "Configuração de Custos Fixos e Parâmetros Gerais",
-                "personalCostsTitle": "Custos Pessoais Mensais",
-                "companyCostsTitle": "Custos da Empresa Mensais",
-                "equipmentTitle": "Equipamentos",
-                "workFinancialParamsTitle": "Parâmetros de Trabalho e Financeiros"
-            },
-            "tabProject": {
-                "title": "Calculadora de Projeto Específico",
-                "projectInfoTitle": "Informações do Projeto",
-                "timeDeliverablesTitle": "Tempo e Entregáveis",
-                "additionalCostsTitle": "Custos Adicionais Específicos do Projeto",
-                "financialParamsTitle": "Parâmetros Financeiros do Projeto"
-            },
-            "tabHistory": {
-                "title": "Histórico de Projetos Salvos",
-                "noProjectsSaved": "Nenhum projeto salvo ainda.",
-                "client": "Contratante:",
-                "projectDateLabel": "Data do Projeto:",
-                "description": "Descrição:",
-                "pricePix": "Preço PIX/À Vista:",
-                "priceCard": "Preço Cartão:",
-                "savedAt": "Salvo em:"
-            },
-            "buttons": {
-                "addPersonalCost": "Adicionar Custo Pessoal",
-                "addCompanyCost": "Adicionar Custo da Empresa",
-                "addEquipment": "Adicionar Equipamento",
-                "calculateUpdateFixedCosts": "Calcular/Atualizar Custos Fixos",
-                "addAdditionalCost": "Adicionar Custo Adicional",
-                "calculateProjectPrice": "Calcular Preço do Projeto",
-                "saveCurrentProject": "Salvar Projeto Atual",
-                "print": "Imprimir",
-                "close": "Fechar",
-                "remove": "Remover",
-                "viewDetails": "Ver Detalhes",
-                "delete": "Excluir"
-            },
-            "placeholders": {
-                "exampleSalary": "Ex: 3000",
-                "exampleWorkDays": "Ex: 22",
-                "exampleWorkHours": "Ex: 8",
-                "examplePercentage": "Ex: 10",
-                "clientName": "Nome do cliente",
-                "projectDetails": "Detalhes do job",
-                "exampleHours": "Ex: 8",
-                "exampleQuantity": "Ex: 40",
-                "exampleMinutes": "Ex: 5",
-                "exampleCardFee": "Ex: 4.5",
-                "personalCostDescription": "Descrição do Custo Pessoal",
-                "companyCostDescription": "Descrição do Custo da Empresa",
-                "equipmentDescription": "Descrição do Equipamento",
-                "valueRS": "Valor (R$)",
-                "acquisitionValueRS": "Valor de Aquisição (R$)",
-                "additionalCostDescription": "Descrição do Custo Adicional"
-            },
-            "results": {
-                "fixedCostsTitle": "Resultados dos Custos Fixos (Mensal)",
-                "totalPersonalCosts": "Total de Custos Pessoais:",
-                "totalCompanyCosts": "Total de Custos da Empresa (c/ Pró-labore, 13º, Férias):",
-                "totalEquipmentValue": "Valor Total dos Equipamentos:",
-                "monthlyDepreciation": "Depreciação dos Equipamentos:",
-                "estimatedDailyRate": "Valor da Diária Estimado:",
-                "estimatedBaseHourCost": "Custo/Hora Base Estimado:",
-                "totalEstimatedMonthlyCost": "Gasto Total Estimado (c/ Gastos Ocasionais):",
-                "projectResultsTitle": "Resultados do Projeto",
-                "totalAllocatedCost": "Custo Total Alocado ao Projeto:",
-                "calculatedProfit": "Valor do Lucro Calculado:",
-                "estimatedTaxes": "Valor dos Impostos Estimados:",
-                "suggestedPricePix": "Preço Sugerido (PIX/À Vista):",
-                "suggestedPriceCard": "Preço Sugerido (Cartão):",
-                "detailedFinancialSummary": "Resumo Financeiro Detalhado:",
-                "summaryPersonalCost": "Parcela do Custo Pessoal:",
-                "summaryCompanyCost": "Parcela do Custo da Empresa:",
-                "summarySalary": "Parcela do Salário (Pró-labore):",
-                "summary13th": "Parcela do 13º:",
-                "summaryVacation": "Parcela das Férias:",
-                "summaryDepreciation": "Parcela da Depreciação:",
-                "summaryOccasionalExpenses": "Parcela dos Gastos Ocasionais:",
-                "summaryAdditionalProjectCosts": "Soma dos Custos Adicionais do Projeto:",
-                "summaryProjectProfit": "Lucro do Projeto:",
-                "summaryProjectTaxes": "Impostos do Projeto:",
-                "projectsNeededMonthly": "Para cobrir seus custos mensais, você precisaria de aproximadamente",
-                "projectsLikeThisInMonth": "projetos como este no mês.",
-                "optionalsTitle": "Opcionais:",
-                "pricePerAdditionalDeliverable": "Preço Sugerido por Entregável Adicional:",
-                "pricePerAdditionalHour": "Preço Sugerido por Hora Adicional de Trabalho:"
-            },
-            "tooltips": {
-                "personalCosts": "São os gastos que você tem para manter o seu estilo de vida e o bem-estar da sua família. São despesas que você precisa cobrir independentemente de estar trabalhando ou não. Exemplos: Aluguel ou prestação da casa, condomínio, IPTU, luz, água, gás, internet, telefone, Alimentação, etc.",
-                "companyCosts": "São os gastos que você tem diretamente relacionados ao funcionamento do seu negócio. Exemplos: Programas de edição de vídeo e foto, ferramentas de design, armazenamento em nuvem, domínio, hospedagem, anúncios pagos, impulsionamento de posts, plano de celular, internet, MEI, contador, taxas administrativas, papel, caneta, equipamentos de escritório.",
-                "desiredSalary": "Valor que você deseja retirar da sua empresa pelo seu trabalho.",
-                "equipment": "São todos os itens que você usa diretamente na execução do seu ofício. Exemplos: Câmera, Lentes, Iluminação, Laptop, Computadores, Monitores, Tablets, Impressora.",
-                "workDaysPerMonth": "Quantidade de dias que você pretende se dedicar ao trabalho a cada mês.",
-                "workHoursPerDay": "Quantidade de horas que você pretende se dedicar ao trabalho a cada dia.",
-                "occasionalExpensesPercentage": "Reserva de emergencia para gastos não previstos. Exemplos: Pendrive não funciona e precisa ser trocado. Pneu furou no caminho para o trabalho. Falta de material em um fornecedor barato sendo necessário contatar um fornecedor mais caro.",
-                "estimatedProjectWorkTime": "Tempo necessário para executar o trabalho. Não esquecer de adicionar o tempo de deslocamento",
-                "numberOfDeliverables": "Número de fotos, vídeos, aulas que serão entregues ao cliente",
-                "avgTimePerDeliverable": "Tempo gasto em cada entregável. Seja ele foto, video, aula, etc.",
-                "additionalCosts": "Custos que se aplicam exclusivamente a esse projeto. Exemplo: deslocamento, alimentação, aluguel de lente, ajudante, impressão de álbum, etc."
-            },
-            "projectDetailsModal": {
-                "title": "Detalhes do Projeto",
-                "clientNameLabel": "Nome do Contratante:",
-                "projectDateLabel": "Data do Projeto:",
-                "detailedDescriptionLabel": "Descrição Detalhada:",
-                "calculationInfoTitle": "Informações do Cálculo:",
-                "estimatedWorkTimeLabel": "Tempo de Trabalho Estimado:",
-                "hours": "horas",
-                "deliverablesLabel": "Número de Entregáveis:",
-                "avgTimePerDeliverableLabel": "Tempo Médio por Entregável:",
-                "minutes": "minutos",
-                "profitPercentageLabel": "Percentual de Lucro:",
-                "taxPercentageLabel": "Percentual de Impostos:",
-                "cardFeeLabel": "Taxa do Cartão:",
-                "additionalProjectCostsTitle": "Custos Adicionais do Projeto:",
-                "financialResultsTitle": "Resultados Financeiros:",
-                "totalAllocatedCostLabel": "Custo Total Alocado ao Projeto:",
-                "calculatedProfitLabel": "Valor do Lucro Calculado:",
-                "estimatedTaxesLabel": "Valor dos Impostos Estimados:",
-                "suggestedPricePixLabel": "Preço Sugerido (PIX/À Vista):",
-                "suggestedPriceCardLabel": "Preço Sugerido (Cartão):",
-                "detailedFinancialSummaryTitle": "Resumo Financeiro Detalhado:",
-                "personalCostShareLabel": "Parcela do Custo Pessoal:",
-                "companyCostShareLabel": "Parcela do Custo da Empresa:",
-                "salaryShareLabel": "Parcela do Salário (Pró-labore):",
-                "_13thShareLabel": "Parcela do 13º:",
-                "vacationShareLabel": "Parcela das Férias:",
-                "depreciationShareLabel": "Parcela da Depreciação:",
-                "occasionalExpensesShareLabel": "Parcela dos Gastos Ocasionais:",
-                "sumAdditionalCostsLabel": "Soma dos Custos Adicionais do Projeto:",
-                "projectProfitLabel": "Lucro do Projeto:",
-                "projectTaxesLabel": "Impostos do Projeto:",
-                "projectsNeededMonthlyLabel": "Projetos como este necessários no mês:",
-                "optionalsTitle": "Opcionais:",
-                "pricePerAdditionalDeliverableLabel": "Preço Sugerido por Entregável Adicional:",
-                "pricePerAdditionalHourLabel": "Preço Sugerido por Hora Adicional de Trabalho:",
-                "notInformed": "Não informado"
-            },
-            "alerts": {
-                "fixedCostsCalculated": "Custos fixos calculados, atualizados e salvos no seu navegador!",
-                "calculateFixedCostsFirst": "Por favor, calcule e atualize os Custos Fixos na aba Configurar Custos Fixos primeiro.",
-                "workDaysOrHoursCannotBeZero": "Dias trabalhados ou horas por dia não podem ser zero. Verifique a configuração de custos.",
-                "projectPriceCalculated": "Preço do projeto calculado e salvo no seu navegador!",
-                "saveProjectNamePrompt": "Digite um nome para este projeto (ex: Casamento Ana e João):",
-                "saveCancelledNoName": "Salvamento cancelado. É necessário fornecer um nome para o projeto.",
-                "projectNotCalculated": "Não foi possível calcular o projeto. Verifique os dados e tente novamente.",
-                "projectSavedSuccess": "Projeto \"{{projectName}}\" salvo com sucesso no histórico!",
-                "confirmDeleteProject": "Tem certeza que deseja excluir este projeto do histórico? Esta ação não pode ser desfeita.",
-                "projectDeleted": "Projeto excluído do histórico.",
-                "projectNotFound": "Projeto não encontrado!"
-            },
-            "initialData": {
-                "rent": "Aluguel",
-                "adobeSoftware": "Software Adobe",
-                "sonyCamera": "Câmera Sony A7III",
-                "transport": "Transporte"
-            }
-        }
-    },
-    "en": {
-        translation: {
-            "pageTitle": "Smart Pricing - Pricing Tool",
-            "mainTitle": "Smart Pricing - Pricing Tool",
-            "labels": {
-                "theme": "Theme:",
-                "language": "Language:",
-                "desiredSalary": "Desired Salary (Pro-labore):",
-                "workDaysPerMonth": "Work Days per Month:",
-                "workHoursPerDay": "Work Hours per Day:",
-                "occasionalExpensesPercentage": "Percentage for Occasional Expenses (%):",
-                "clientName": "Client's Name:",
-                "projectDate": "Project Date:",
-                "projectDescription": "Detailed Project Description:",
-                "estimatedProjectWorkTime": "Total Estimated Work Time for the Project (hours):",
-                "numberOfDeliverables": "Number of Deliverables:",
-                "avgTimePerDeliverable": "Average Time Spent per Deliverable (minutes):",
-                "desiredProfitPercentage": "Desired Profit Percentage over Cost (%):",
-                "taxPercentage": "Tax Percentage on Revenue (%):",
-                "cardFeePercentage": "Card Operator Fee (%):"
-            },
-            "themeOptions": {
-                "light": "Light",
-                "dark": "Dark",
-                "auto": "Automatic"
-            },
-            "tabs": {
-                "configCustos": "1. Configure Fixed Costs",
-                "calculateProject": "2. Calculate Project",
-                "projectHistory": "3. Project History"
-            },
-            "tabCustos": {
-                "title": "Fixed Costs Configuration and General Parameters",
-                "personalCostsTitle": "Monthly Personal Costs",
-                "companyCostsTitle": "Monthly Company Costs",
-                "equipmentTitle": "Equipment",
-                "workFinancialParamsTitle": "Work and Financial Parameters"
-            },
-            "tabProject": {
-                "title": "Specific Project Calculator",
-                "projectInfoTitle": "Project Information",
-                "timeDeliverablesTitle": "Time and Deliverables",
-                "additionalCostsTitle": "Specific Additional Costs for the Project",
-                "financialParamsTitle": "Project Financial Parameters"
-            },
-            "tabHistory": {
-                "title": "Saved Projects History",
-                "noProjectsSaved": "No projects saved yet.",
-                "client": "Client:",
-                "projectDateLabel": "Project Date:",
-                "description": "Description:",
-                "pricePix": "Price (PIX/Cash):",
-                "priceCard": "Price (Card):",
-                "savedAt": "Saved at:"
-            },
-            "buttons": {
-                "addPersonalCost": "Add Personal Cost",
-                "addCompanyCost": "Add Company Cost",
-                "addEquipment": "Add Equipment",
-                "calculateUpdateFixedCosts": "Calculate/Update Fixed Costs",
-                "addAdditionalCost": "Add Additional Cost",
-                "calculateProjectPrice": "Calculate Project Price",
-                "saveCurrentProject": "Save Current Project",
-                "print": "Print",
-                "close": "Close",
-                "remove": "Remove",
-                "viewDetails": "View Details",
-                "delete": "Delete"
-            },
-            "placeholders": {
-                "exampleSalary": "Ex: 3000",
-                "exampleWorkDays": "Ex: 22",
-                "exampleWorkHours": "Ex: 8",
-                "examplePercentage": "Ex: 10",
-                "clientName": "Client's name",
-                "projectDetails": "Job details",
-                "exampleHours": "Ex: 8",
-                "exampleQuantity": "Ex: 40",
-                "exampleMinutes": "Ex: 5",
-                "exampleCardFee": "Ex: 4.5",
-                "personalCostDescription": "Personal Cost Description",
-                "companyCostDescription": "Company Cost Description",
-                "equipmentDescription": "Equipment Description",
-                "valueRS": "Value ($)",
-                "acquisitionValueRS": "Acquisition Value ($)",
-                "additionalCostDescription": "Additional Cost Description"
-            },
-            "results": {
-                "fixedCostsTitle": "Fixed Costs Results (Monthly)",
-                "totalPersonalCosts": "Total Personal Costs:",
-                "totalCompanyCosts": "Total Company Costs (w/ Pro-labore, 13th, Vacation):",
-                "totalEquipmentValue": "Total Equipment Value:",
-                "monthlyDepreciation": "Equipment Depreciation:",
-                "estimatedDailyRate": "Estimated Daily Rate:",
-                "estimatedBaseHourCost": "Estimated Base Hour Cost:",
-                "totalEstimatedMonthlyCost": "Total Estimated Monthly Cost (w/ Occasional Expenses):",
-                "projectResultsTitle": "Project Results",
-                "totalAllocatedCost": "Total Cost Allocated to Project:",
-                "calculatedProfit": "Calculated Profit Value:",
-                "estimatedTaxes": "Estimated Tax Value:",
-                "suggestedPricePix": "Suggested Price (PIX/Cash):",
-                "suggestedPriceCard": "Suggested Price (Card):",
-                "detailedFinancialSummary": "Detailed Financial Summary:",
-                "summaryPersonalCost": "Personal Cost Share:",
-                "summaryCompanyCost": "Company Cost Share:",
-                "summarySalary": "Salary Share (Pro-labore):",
-                "summary13th": "13th Salary Share:",
-                "summaryVacation": "Vacation Share:",
-                "summaryDepreciation": "Depreciation Share:",
-                "summaryOccasionalExpenses": "Occasional Expenses Share:",
-                "summaryAdditionalProjectCosts": "Sum of Additional Project Costs:",
-                "summaryProjectProfit": "Project Profit:",
-                "summaryProjectTaxes": "Project Taxes:",
-                "projectsNeededMonthly": "To cover your monthly costs, you would need approximately",
-                "projectsLikeThisInMonth": "projects like this per month.",
-                "optionalsTitle": "Optionals:",
-                "pricePerAdditionalDeliverable": "Suggested Price per Additional Deliverable:",
-                "pricePerAdditionalHour": "Suggested Price per Additional Work Hour:"
-            },
-            "tooltips": {
-                "personalCosts": "These are the expenses you have to maintain your lifestyle and your family's well-being. These are expenses you need to cover whether you are working or not. Examples: Rent or mortgage, condo fees, property tax, electricity, water, gas, internet, phone, food, etc.",
-                "companyCosts": "These are the expenses directly related to running your business. Examples: Video and photo editing software, design tools, cloud storage, domain, hosting, paid ads, post boosting, cell phone plan, internet, MEI, accountant, administrative fees, paper, pen, office equipment.",
-                "desiredSalary": "Amount you wish to withdraw from your company for your work.",
-                "equipment": "These are all the items you use directly in the execution of your craft. Examples: Camera, Lenses, Lighting, Laptop, Computers, Monitors, Tablets, Printer.",
-                "workDaysPerMonth": "Number of days you plan to dedicate to work each month.",
-                "workHoursPerDay": "Number of hours you plan to dedicate to work each day.",
-                "occasionalExpensesPercentage": "Emergency reserve for unforeseen expenses. Examples: USB drive fails and needs replacement. Flat tire on the way to work. Lack of material from a cheap supplier nécessitating a more expensive one.",
-                "estimatedProjectWorkTime": "Time needed to perform the work. Don't forget to add travel time.",
-                "numberOfDeliverables": "Number of photos, videos, lessons to be delivered to the client.",
-                "avgTimePerDeliverable": "Time spent on each deliverable, be it photo, video, lesson, etc.",
-                "additionalCosts": "Costs that apply exclusively to this project. Example: travel, food, lens rental, assistant, album printing, etc."
-            },
-            "projectDetailsModal": {
-                "title": "Project Details",
-                "clientNameLabel": "Client's Name:",
-                "projectDateLabel": "Project Date:",
-                "detailedDescriptionLabel": "Detailed Description:",
-                "calculationInfoTitle": "Calculation Information:",
-                "estimatedWorkTimeLabel": "Estimated Work Time:",
-                "hours": "hours",
-                "deliverablesLabel": "Number of Deliverables:",
-                "avgTimePerDeliverableLabel": "Average Time per Deliverable:",
-                "minutes": "minutes",
-                "profitPercentageLabel": "Profit Percentage:",
-                "taxPercentageLabel": "Tax Percentage:",
-                "cardFeeLabel": "Card Fee:",
-                "additionalProjectCostsTitle": "Additional Project Costs:",
-                "financialResultsTitle": "Financial Results:",
-                "totalAllocatedCostLabel": "Total Cost Allocated to Project:",
-                "calculatedProfitLabel": "Calculated Profit Value:",
-                "estimatedTaxesLabel": "Estimated Tax Value:",
-                "suggestedPricePixLabel": "Suggested Price (PIX/Cash):",
-                "suggestedPriceCardLabel": "Suggested Price (Card):",
-                "detailedFinancialSummaryTitle": "Detailed Financial Summary:",
-                "personalCostShareLabel": "Personal Cost Share:",
-                "companyCostShareLabel": "Company Cost Share:",
-                "salaryShareLabel": "Salary Share (Pro-labore):",
-                "_13thShareLabel": "13th Salary Share:",
-                "vacationShareLabel": "Vacation Share:",
-                "depreciationShareLabel": "Depreciation Share:",
-                "occasionalExpensesShareLabel": "Occasional Expenses Share:",
-                "sumAdditionalCostsLabel": "Sum of Additional Project Costs:",
-                "projectProfitLabel": "Project Profit:",
-                "projectTaxesLabel": "Project Taxes:",
-                "projectsNeededMonthlyLabel": "Projects like this needed per month:",
-                "optionalsTitle": "Optionals:",
-                "pricePerAdditionalDeliverableLabel": "Suggested Price per Additional Deliverable:",
-                "pricePerAdditionalHourLabel": "Suggested Price per Additional Work Hour:",
-                "notInformed": "Not informed"
-            },
-            "alerts": {
-                "fixedCostsCalculated": "Fixed costs calculated, updated, and saved in your browser!",
-                "calculateFixedCostsFirst": "Please calculate and update Fixed Costs in the Configure Fixed Costs tab first.",
-                "workDaysOrHoursCannotBeZero": "Work days or hours per day cannot be zero. Check the cost configuration.",
-                "projectPriceCalculated": "Project price calculated and saved in your browser!",
-                "saveProjectNamePrompt": "Enter a name for this project (e.g., Wedding Ana and John):",
-                "saveCancelledNoName": "Save cancelled. A name is required for the project.",
-                "projectNotCalculated": "Could not calculate project. Check the data and try again.",
-                "projectSavedSuccess": "Project \"{{projectName}}\" saved successfully to history!",
-                "confirmDeleteProject": "Are you sure you want to delete this project from history? This action cannot be undone.",
-                "projectDeleted": "Project deleted from history.",
-                "projectNotFound": "Project not found!"
-            },
-            "initialData": {
-                "rent": "Rent",
-                "adobeSoftware": "Adobe Software",
-                "sonyCamera": "Sony A7III Camera",
-                "transport": "Transportation"
-            }
-        }
-    },
-    "es": {
-        translation: {
-            "pageTitle": "Smart Pricing - Herramienta de Precios",
-            "mainTitle": "Smart Pricing - Herramienta de Precios",
-            "labels": {
-                "theme": "Tema:",
-                "language": "Idioma:",
-                "desiredSalary": "Salario Deseado (Pro-labore):",
-                "workDaysPerMonth": "Días de Trabajo por Mes:",
-                "workHoursPerDay": "Horas de Trabajo por Día:",
-                "occasionalExpensesPercentage": "Porcentaje para Gastos Ocasionales (%):",
-                "clientName": "Nombre del Cliente:",
-                "projectDate": "Fecha del Proyecto:",
-                "projectDescription": "Descripción Detallada del Proyecto:",
-                "estimatedProjectWorkTime": "Tiempo Total Estimado de Trabajo para el Proyecto (horas):",
-                "numberOfDeliverables": "Número de Entregables:",
-                "avgTimePerDeliverable": "Tiempo Promedio por Entregable (minutos):",
-                "desiredProfitPercentage": "Porcentaje de Ganancia Deseado sobre el Costo (%):",
-                "taxPercentage": "Porcentaje de Impuestos sobre la Facturación (%):",
-                "cardFeePercentage": "Tasa del Operador de Tarjeta (%):"
-            },
-            "themeOptions": {
-                "light": "Claro",
-                "dark": "Oscuro",
-                "auto": "Automático"
-            },
-            "tabs": {
-                "configCustos": "1. Configurar Costos Fijos",
-                "calculateProject": "2. Calcular Proyecto",
-                "projectHistory": "3. Historial de Proyectos"
-            },
-            "tabCustos": {
-                "title": "Configuración de Costos Fijos y Parámetros Generales",
-                "personalCostsTitle": "Costos Personales Mensuales",
-                "companyCostsTitle": "Costos de la Empresa Mensuales",
-                "equipmentTitle": "Equipos",
-                "workFinancialParamsTitle": "Parámetros Laborales y Financieros"
-            },
-            "tabProject": {
-                "title": "Calculadora de Proyecto Específico",
-                "projectInfoTitle": "Información del Proyecto",
-                "timeDeliverablesTitle": "Tiempo y Entregables",
-                "additionalCostsTitle": "Costos Adicionales Específicos del Proyecto",
-                "financialParamsTitle": "Parámetros Financieros del Proyecto"
-            },
-            "tabHistory": {
-                "title": "Historial de Proyectos Guardados",
-                "noProjectsSaved": "Aún no hay proyectos guardados.",
-                "client": "Cliente:",
-                "projectDateLabel": "Fecha del Proyecto:",
-                "description": "Descripción:",
-                "pricePix": "Precio (PIX/Efectivo):",
-                "priceCard": "Precio (Tarjeta):",
-                "savedAt": "Guardado el:"
-            },
-            "buttons": {
-                "addPersonalCost": "Añadir Costo Personal",
-                "addCompanyCost": "Añadir Costo de Empresa",
-                "addEquipment": "Añadir Equipo",
-                "calculateUpdateFixedCosts": "Calcular/Actualizar Costos Fijos",
-                "addAdditionalCost": "Añadir Costo Adicional",
-                "calculateProjectPrice": "Calcular Precio del Proyecto",
-                "saveCurrentProject": "Guardar Proyecto Actual",
-                "print": "Imprimir",
-                "close": "Cerrar",
-                "remove": "Eliminar",
-                "viewDetails": "Ver Detalles",
-                "delete": "Borrar"
-            },
-            "placeholders": {
-                "exampleSalary": "Ej: 3000",
-                "exampleWorkDays": "Ej: 22",
-                "exampleWorkHours": "Ej: 8",
-                "examplePercentage": "Ej: 10",
-                "clientName": "Nombre del cliente",
-                "projectDetails": "Detalles del trabajo",
-                "exampleHours": "Ej: 8",
-                "exampleQuantity": "Ej: 40",
-                "exampleMinutes": "Ej: 5",
-                "exampleCardFee": "Ej: 4.5",
-                "personalCostDescription": "Descripción del Costo Personal",
-                "companyCostDescription": "Descripción del Costo de Empresa",
-                "equipmentDescription": "Descripción del Equipo",
-                "valueRS": "Valor (€)",
-                "acquisitionValueRS": "Valor de Adquisición (€)",
-                "additionalCostDescription": "Descripción del Costo Adicional"
-            },
-            "results": {
-                "fixedCostsTitle": "Resultados de Costos Fijos (Mensual)",
-                "totalPersonalCosts": "Total de Costos Personales:",
-                "totalCompanyCosts": "Total de Costos de Empresa (c/ Pro-labore, Paga Extra, Vacaciones):",
-                "totalEquipmentValue": "Valor Total de Equipos:",
-                "monthlyDepreciation": "Depreciación de Equipos:",
-                "estimatedDailyRate": "Tarifa Diaria Estimada:",
-                "estimatedBaseHourCost": "Costo/Hora Base Estimado:",
-                "totalEstimatedMonthlyCost": "Costo Mensual Total Estimado (c/ Gastos Ocasionales):",
-                "projectResultsTitle": "Resultados del Proyecto",
-                "totalAllocatedCost": "Costo Total Asignado al Proyecto:",
-                "calculatedProfit": "Valor de la Ganancia Calculada:",
-                "estimatedTaxes": "Valor de Impuestos Estimados:",
-                "suggestedPricePix": "Precio Sugerido (PIX/Efectivo):",
-                "suggestedPriceCard": "Precio Sugerido (Tarjeta):",
-                "detailedFinancialSummary": "Resumen Financiero Detallado:",
-                "summaryPersonalCost": "Parte del Costo Personal:",
-                "summaryCompanyCost": "Parte del Costo de Empresa:",
-                "summarySalary": "Parte del Salario (Pro-labore):",
-                "summary13th": "Parte de la Paga Extra:",
-                "summaryVacation": "Parte de las Vacaciones:",
-                "summaryDepreciation": "Parte de la Depreciación:",
-                "summaryOccasionalExpenses": "Parte de Gastos Ocasionales:",
-                "summaryAdditionalProjectCosts": "Suma de Costos Adicionales del Proyecto:",
-                "summaryProjectProfit": "Ganancia del Proyecto:",
-                "summaryProjectTaxes": "Impuestos del Proyecto:",
-                "projectsNeededMonthly": "Para cubrir sus costos mensuales, necesitaría aproximadamente",
-                "projectsLikeThisInMonth": "proyectos como este al mes.",
-                "optionalsTitle": "Opcionales:",
-                "pricePerAdditionalDeliverable": "Precio Sugerido por Entregable Adicional:",
-                "pricePerAdditionalHour": "Precio Sugerido por Hora Adicional de Trabajo:"
-            },
-            "tooltips": {
-                "personalCosts": "Son los gastos que tienes para mantener tu estilo de vida y el bienestar de tu familia. Son gastos que necesitas cubrir independientemente de si estás trabajando o no. Ejemplos: Alquiler o hipoteca, gastos de comunidad, IBI, luz, agua, gas, internet, teléfono, alimentación, etc.",
-                "companyCosts": "Son los gastos directamente relacionados con el funcionamiento de tu negocio. Ejemplos: Software de edición de vídeo y foto, herramientas de diseño, almacenamiento en la nube, dominio, hosting, anuncios pagados, promoción de publicaciones, plan de telefonía móvil, internet, autónomo, gestor, tasas administrativas, papel, bolígrafo, material de oficina.",
-                "desiredSalary": "Cantidad que deseas retirar de tu empresa por tu trabajo.",
-                "equipment": "Son todos los elementos que utilizas directamente en la ejecución de tu oficio. Ejemplos: Cámara, Lentes, Iluminación, Portátil, Ordenadores, Monitores, Tablets, Impresora.",
-                "workDaysPerMonth": "Número de días que planeas dedicar al trabajo cada mes.",
-                "workHoursPerDay": "Número de horas que planeas dedicar al trabalho cada día.",
-                "occasionalExpensesPercentage": "Reserva de emergencia para gastos imprevistos. Ejemplos: Un pendrive falla y necesita ser reemplazado. Pinchazo de rueda camino al trabajo. Falta de material en un proveedor económico que obliga a contactar con uno más caro.",
-                "estimatedProjectWorkTime": "Tiempo necesario para realizar el trabajo. No olvides añadir el tiempo de desplazamiento.",
-                "numberOfDeliverables": "Número de fotos, vídeos, clases que se entregarán al cliente.",
-                "avgTimePerDeliverable": "Tiempo dedicado a cada entregable, ya sea foto, vídeo, clase, etc.",
-                "additionalCosts": "Costos que se aplican exclusivamente a este proyecto. Ejemplo: desplazamiento, dietas, alquiler de lentes, ayudante, impresión de álbum, etc."
-            },
-            "projectDetailsModal": {
-                "title": "Detalles del Proyecto",
-                "clientNameLabel": "Nombre del Cliente:",
-                "projectDateLabel": "Fecha del Proyecto:",
-                "detailedDescriptionLabel": "Descripción Detallada:",
-                "calculationInfoTitle": "Información del Cálculo:",
-                "estimatedWorkTimeLabel": "Tiempo de Trabajo Estimado:",
-                "hours": "horas",
-                "deliverablesLabel": "Número de Entregables:",
-                "avgTimePerDeliverableLabel": "Tiempo Promedio por Entregable:",
-                "minutes": "minutos",
-                "profitPercentageLabel": "Porcentaje de Ganancia:",
-                "taxPercentageLabel": "Porcentaje de Impuestos:",
-                "cardFeeLabel": "Tasa de Tarjeta:",
-                "additionalProjectCostsTitle": "Costos Adicionales del Proyecto:",
-                "financialResultsTitle": "Resultados Financieros:",
-                "totalAllocatedCostLabel": "Costo Total Asignado al Proyecto:",
-                "calculatedProfitLabel": "Valor de la Ganancia Calculada:",
-                "estimatedTaxesLabel": "Valor de Impuestos Estimados:",
-                "suggestedPricePixLabel": "Precio Sugerido (PIX/Efectivo):",
-                "suggestedPriceCardLabel": "Precio Sugerido (Tarjeta):",
-                "detailedFinancialSummaryTitle": "Resumen Financiero Detallado:",
-                "personalCostShareLabel": "Parte del Costo Personal:",
-                "companyCostShareLabel": "Parte del Costo de Empresa:",
-                "salaryShareLabel": "Parte del Salario (Pro-labore):",
-                "_13thShareLabel": "Parte de la Paga Extra:",
-                "vacationShareLabel": "Parte de las Vacaciones:",
-                "depreciationShareLabel": "Parte de la Depreciación:",
-                "occasionalExpensesShareLabel": "Parte de Gastos Ocasionales:",
-                "sumAdditionalCostsLabel": "Suma de Costos Adicionales del Proyecto:",
-                "projectProfitLabel": "Ganancia del Proyecto:",
-                "projectTaxesLabel": "Impuestos del Proyecto:",
-                "projectsNeededMonthlyLabel": "Proyectos como este necesarios al mes:",
-                "optionalsTitle": "Opcionales:",
-                "pricePerAdditionalDeliverableLabel": "Precio Sugerido por Entregable Adicional:",
-                "pricePerAdditionalHourLabel": "Precio Sugerido por Hora Adicional de Trabajo:",
-                "notInformed": "No informado"
-            },
-            "alerts": {
-                "fixedCostsCalculated": "¡Costos fijos calculados, actualizados y guardados en tu navegador!",
-                "calculateFixedCostsFirst": "Por favor, calcula y actualiza los Costos Fijos en la pestaña Configurar Costos Fijos primero.",
-                "workDaysOrHoursCannotBeZero": "Los días trabajados o las horas por día no pueden ser cero. Verifica la configuración de costos.",
-                "projectPriceCalculated": "¡Precio del proyecto calculado y guardado en tu navegador!",
-                "saveProjectNamePrompt": "Introduce un nombre para este proyecto (ej: Boda Ana y Juan):",
-                "saveCancelledNoName": "Guardado cancelado. Se requiere un nombre para el proyecto.",
-                "projectNotCalculated": "No se pudo calcular el proyecto. Verifica los datos e inténtalo de nuevo.",
-                "projectSavedSuccess": "¡Proyecto \"{{projectName}}\" guardado con éxito en el historial!",
-                "confirmDeleteProject": "¿Estás seguro de que quieres eliminar este proyecto del historial? Esta acción no se puede deshacer.",
-                "projectDeleted": "Proyecto eliminado del historial.",
-                "projectNotFound": "¡Proyecto no encontrado!"
-            },
-            "initialData": {
-                "rent": "Alquiler",
-                "adobeSoftware": "Software Adobe",
-                "sonyCamera": "Cámara Sony A7III",
-                "transport": "Transporte"
-            }
-        }
-    }
-};
-
-// --- i18next Initialization and Functions ---
-async function initI18next() {
-    await i18next
-        // .use(i18nextHttpBackend) // No longer needed as resources are embedded
-        .use(i18nextBrowserLanguageDetector)
-        .init({
-            fallbackLng: "pt-BR",
-            debug: false, // Set to true for development, false for production
-            resources: i18nextResources, // Use embedded resources
-            detection: {
-                order: ["localStorage", "navigator"],
-                caches: ["localStorage"],
-                lookupLocalStorage: I18N_LANG_KEY,
-            },
-            // backend: { // No longer needed
-            //     loadPath: "./locales/{{lng}}/translation.json",
-            // }
-        });
-    updateContent();
-    document.getElementById("languageSelector").value = i18next.language.startsWith("pt") ? "pt-BR" : i18next.language.split("-")[0];
-    document.getElementById("languageSelector").addEventListener("change", (event) => {
-        i18next.changeLanguage(event.target.value).then(updateContent);
-    });
-}
-
-function updateContent() {
-    document.querySelectorAll("[data-i18n]").forEach(element => {
-        const key = element.getAttribute("data-i18n");
-        element.innerHTML = i18next.t(key);
-    });
-
-    document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
-        const key = element.getAttribute("data-i18n-placeholder");
-        element.placeholder = i18next.t(key);
-    });
-
-    document.querySelectorAll("[data-i18n-tooltip]").forEach(element => {
-        const key = element.getAttribute("data-i18n-tooltip");
-        element.textContent = i18next.t(key);
-    });
-
-    document.title = i18next.t("pageTitle");
-    // Update dynamic button texts if any are not covered by data-i18n (e.g. inside dynamic lists)
-    // This will be handled when items are added/re-rendered
-    // For example, the "Remove" button in dynamic lists needs to be updated if it's re-added
-    // Also, update texts for initially added items if they exist
-    const savedAppData = localStorage.getItem(APP_DATA_KEY);
-    if (!savedAppData) {
-        // If it's the first load and no data is saved, the initial items might need their placeholders translated
-        // This is now handled by calling addCusto... with translated placeholders during initializeApp if no data
-    }
-    // Re-render dynamic lists if they exist to update button texts and placeholders
-    const custosPessoaisList = document.getElementById("custosPessoaisList");
-    if (custosPessoaisList) {
-        Array.from(custosPessoaisList.children).forEach(child => {
-            const descInput = child.querySelector(".item-desc");
-            const valInput = child.querySelector(".item-val");
-            const removeBtn = child.querySelector(".remove-btn");
-            if (descInput) descInput.placeholder = i18next.t("placeholders.personalCostDescription");
-            if (valInput) valInput.placeholder = i18next.t("placeholders.valueRS");
-            if (removeBtn) removeBtn.textContent = i18next.t("buttons.remove");
-        });
-    }
-    const custosEmpresaList = document.getElementById("custosEmpresaList");
-    if (custosEmpresaList) {
-        Array.from(custosEmpresaList.children).forEach(child => {
-            const descInput = child.querySelector(".item-desc");
-            const valInput = child.querySelector(".item-val");
-            const removeBtn = child.querySelector(".remove-btn");
-            if (descInput) descInput.placeholder = i18next.t("placeholders.companyCostDescription");
-            if (valInput) valInput.placeholder = i18next.t("placeholders.valueRS");
-            if (removeBtn) removeBtn.textContent = i18next.t("buttons.remove");
-        });
-    }
-    const equipamentosList = document.getElementById("equipamentosList");
-    if (equipamentosList) {
-        Array.from(equipamentosList.children).forEach(child => {
-            const descInput = child.querySelector(".item-desc");
-            const valInput = child.querySelector(".item-val");
-            const removeBtn = child.querySelector(".remove-btn");
-            if (descInput) descInput.placeholder = i18next.t("placeholders.equipmentDescription");
-            if (valInput) valInput.placeholder = i18next.t("placeholders.acquisitionValueRS");
-            if (removeBtn) removeBtn.textContent = i18next.t("buttons.remove");
-        });
-    }
-    const custosAdicionaisProjetoList = document.getElementById("custosAdicionaisProjetoList");
-    if (custosAdicionaisProjetoList) {
-        Array.from(custosAdicionaisProjetoList.children).forEach(child => {
-            const descInput = child.querySelector(".item-desc");
-            const valInput = child.querySelector(".item-val");
-            const removeBtn = child.querySelector(".remove-btn");
-            if (descInput) descInput.placeholder = i18next.t("placeholders.additionalCostDescription");
-            if (valInput) valInput.placeholder = i18next.t("placeholders.valueRS");
-            if (removeBtn) removeBtn.textContent = i18next.t("buttons.remove");
-        });
-    }
-    // Refresh history list if visible
-    const activeTab = document.querySelector(".tab-button.active")?.getAttribute("onclick")?.split("'")[1];
-    if (activeTab === "tabHistorico") {
-        carregarHistoricoProjetos();
-    }
-}
+const APP_DATA_KEY = "smartPricingAppData_v2"; // Chave para dados gerais da app e projeto atual
+const HISTORICO_PROJETOS_KEY = "smartPricingHistoricoProjetos_v2"; // Chave para o array de projetos salvos
+const THEME_KEY = "smartPricingTheme"; // Chave para o tema selecionado
 
 // --- Gerenciamento de Tema ---
 function applyTheme(theme) {
@@ -716,10 +35,11 @@ function setTheme(theme) {
 }
 
 function loadTheme() {
-    const savedTheme = localStorage.getItem(THEME_KEY) || "auto";
+    const savedTheme = localStorage.getItem(THEME_KEY) || "auto"; // Default to auto
     setTheme(savedTheme);
 }
 
+// Listener para mudanças no tema do sistema (para modo automático)
 if (window.matchMedia) {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", event => {
         const currentTheme = localStorage.getItem(THEME_KEY);
@@ -731,6 +51,7 @@ if (window.matchMedia) {
 
 // --- Fim do Gerenciamento de Tema ---
 
+// Função para abrir abas
 function openTab(evt, tabName) {
     var i, tabcontent, tabbuttons;
     tabcontent = document.getElementsByClassName("tab-content");
@@ -745,7 +66,7 @@ function openTab(evt, tabName) {
     if (evt && evt.currentTarget) {
         evt.currentTarget.className += " active";
     }
-
+    
     const appData = JSON.parse(localStorage.getItem(APP_DATA_KEY)) || {};
     appData.activeTab = tabName;
     localStorage.setItem(APP_DATA_KEY, JSON.stringify(appData));
@@ -755,24 +76,25 @@ function openTab(evt, tabName) {
     }
 }
 
-function addDynamicItem(listId, placeholderDescKey, placeholderValKey, itemDesc = "", itemVal = 0) {
+// Funções para adicionar itens dinâmicos
+function addDynamicItem(listId, placeholderDesc, placeholderVal, itemDesc = "", itemVal = 0) {
     const list = document.getElementById(listId);
     const itemId = listId + "_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
     const listItem = document.createElement("div");
     listItem.className = "dynamic-list-item";
     listItem.id = itemId;
     listItem.innerHTML = `
-        <input type="text" placeholder="${i18next.t(placeholderDescKey)}" class="item-desc" value="${itemDesc}">
-        <input type="number" placeholder="${i18next.t(placeholderValKey)}" class="item-val" value="${itemVal}">
-        <button type="button" class="remove-btn" onclick="removeItem(\'${itemId}\')">${i18next.t("buttons.remove")}</button>
+        <input type="text" placeholder="${placeholderDesc}" class="item-desc" value="${itemDesc}">
+        <input type="number" placeholder="${placeholderVal}" class="item-val" value="${itemVal}">
+        <button type="button" class="remove-btn" onclick="removeItem(\'${itemId}\')">Remover</button>
     `;
     list.appendChild(listItem);
 }
 
-function addCustoPessoalItem(desc = "", val = 0) { addDynamicItem("custosPessoaisList", "placeholders.personalCostDescription", "placeholders.valueRS", desc, val); }
-function addCustoEmpresaItem(desc = "", val = 0) { addDynamicItem("custosEmpresaList", "placeholders.companyCostDescription", "placeholders.valueRS", desc, val); }
-function addEquipamentoItem(desc = "", val = 0) { addDynamicItem("equipamentosList", "placeholders.equipmentDescription", "placeholders.acquisitionValueRS", desc, val); }
-function addCustoAdicionalProjetoItem(desc = "", val = 0) { addDynamicItem("custosAdicionaisProjetoList", "placeholders.additionalCostDescription", "placeholders.valueRS", desc, val); }
+function addCustoPessoalItem(desc = "", val = 0) { addDynamicItem("custosPessoaisList", "Descrição do Custo Pessoal", "Valor (R$)", desc, val); }
+function addCustoEmpresaItem(desc = "", val = 0) { addDynamicItem("custosEmpresaList", "Descrição do Custo da Empresa", "Valor (R$)", desc, val); }
+function addEquipamentoItem(desc = "", val = 0) { addDynamicItem("equipamentosList", "Descrição do Equipamento", "Valor de Aquisição (R$)", desc, val); }
+function addCustoAdicionalProjetoItem(desc = "", val = 0) { addDynamicItem("custosAdicionaisProjetoList", "Descrição do Custo Adicional", "Valor (R$)", desc, val); }
 
 function removeItem(itemId) {
     const item = document.getElementById(itemId);
@@ -814,20 +136,17 @@ function getDynamicListValues(listId) {
 }
 
 function formatCurrency(value) {
-    if (isNaN(value) || value === null) {
-        const lang = i18next.language.startsWith("pt") ? "pt-BR" : i18next.language.split("-")[0];
-        return (0).toLocaleString(lang, { style: "currency", currency: lang === "pt-BR" ? "BRL" : (lang === "es" ? "EUR" : "USD") });
-    }
-    const lang = i18next.language.startsWith("pt") ? "pt-BR" : i18next.language.split("-")[0];
-    return value.toLocaleString(lang, { style: "currency", currency: lang === "pt-BR" ? "BRL" : (lang === "es" ? "EUR" : "USD") });
+    if (isNaN(value) || value === null) return "R$ 0,00";
+    return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
 function formatDate(dateString) {
-    if (!dateString) return i18next.t("projectDetailsModal.notInformed");
+    if (!dateString) return "N/A";
     const date = new Date(dateString);
-    return date.toLocaleDateString(i18next.language.startsWith("pt") ? "pt-BR" : i18next.language.split("-")[0], { timeZone: "UTC" });
+    return date.toLocaleDateString("pt-BR", { timeZone: "UTC" }); // Adicionado UTC para consistência
 }
 
+// --- Persistência de Dados da Aplicação (Custos Fixos e Projeto Atual) ---
 function saveAppDataToLocalStorage() {
     const appData = JSON.parse(localStorage.getItem(APP_DATA_KEY)) || {};
     appData.activeTab = document.querySelector(".tab-button.active")?.getAttribute("onclick")?.split("'")[1] || "tabCustos";
@@ -864,7 +183,7 @@ function loadAppDataFromLocalStorage() {
             document.getElementById("diasTrabalhadosMes").value = data.custosFixos.diasTrabalhadosMes || "";
             document.getElementById("horasTrabalhoDia").value = data.custosFixos.horasTrabalhoDia || "";
             document.getElementById("percentualGastosOcasionais").value = data.custosFixos.percentualGastosOcasionais || 10;
-            document.getElementById("custosPessoaisList").innerHTML = "";
+            document.getElementById("custosPessoaisList").innerHTML = ""; 
             if (data.custosFixos.custosPessoaisList) data.custosFixos.custosPessoaisList.forEach(item => addCustoPessoalItem(item.desc, item.val));
             document.getElementById("custosEmpresaList").innerHTML = "";
             if (data.custosFixos.custosEmpresaList) data.custosFixos.custosEmpresaList.forEach(item => addCustoEmpresaItem(item.desc, item.val));
@@ -885,23 +204,24 @@ function loadAppDataFromLocalStorage() {
             if (data.projetoAtual.custosAdicionaisProjetoList) data.projetoAtual.custosAdicionaisProjetoList.forEach(item => addCustoAdicionalProjetoItem(item.desc, item.val));
         }
         if (data.custosFixos && (data.custosFixos.diasTrabalhadosMes || data.custosFixos.salarioProLabore)) {
-            calcularCustosFixos(false);
+            calcularCustosFixos(false); 
         }
         const activeTab = data.activeTab || "tabCustos";
         const tabButton = document.querySelector(`button[onclick*="${activeTab}"]`);
-        if (tabButton) openTab({ currentTarget: tabButton }, activeTab); // Pass event-like object
+        if (tabButton) tabButton.click();
     }
 }
 
+// --- Cálculos ---
 function calcularCustosFixos(showAlert = true) {
     GLOBAIS_CUSTOS_FIXOS.totalCustosPessoais = getDynamicListValues("custosPessoaisList").total;
     GLOBAIS_CUSTOS_FIXOS.salarioProLabore = getElementValue("salarioProLabore", true);
     GLOBAIS_CUSTOS_FIXOS.totalCustosEmpresaBase = getDynamicListValues("custosEmpresaList").total;
     const decimoTerceiroMensal = GLOBAIS_CUSTOS_FIXOS.salarioProLabore / 12;
-    const feriasMensal = (GLOBAIS_CUSTOS_FIXOS.salarioProLabore * (1/3)) / 12;
+    const feriasMensal = (GLOBAIS_CUSTOS_FIXOS.salarioProLabore * (1/3)) / 12; 
     GLOBAIS_CUSTOS_FIXOS.totalCustosEmpresaCompleto = GLOBAIS_CUSTOS_FIXOS.totalCustosEmpresaBase + GLOBAIS_CUSTOS_FIXOS.salarioProLabore + decimoTerceiroMensal + feriasMensal;
     GLOBAIS_CUSTOS_FIXOS.totalValorEquipamentos = getDynamicListValues("equipamentosList").total;
-    GLOBAIS_CUSTOS_FIXOS.depreciacaoMensal = (GLOBAIS_CUSTOS_FIXOS.totalValorEquipamentos * 0.15) / 12;
+    GLOBAIS_CUSTOS_FIXOS.depreciacaoMensal = (GLOBAIS_CUSTOS_FIXOS.totalValorEquipamentos * 0.15) / 12; 
     GLOBAIS_CUSTOS_FIXOS.percentualGastosOcasionais = getElementValue("percentualGastosOcasionais", true) / 100;
     const somaCustosBase = GLOBAIS_CUSTOS_FIXOS.totalCustosPessoais + GLOBAIS_CUSTOS_FIXOS.totalCustosEmpresaCompleto + GLOBAIS_CUSTOS_FIXOS.depreciacaoMensal;
     GLOBAIS_CUSTOS_FIXOS.gastoMensalTotal = somaCustosBase * (1 + GLOBAIS_CUSTOS_FIXOS.percentualGastosOcasionais);
@@ -919,16 +239,16 @@ function calcularCustosFixos(showAlert = true) {
     document.getElementById("resCustoHoraBase").textContent = formatCurrency(GLOBAIS_CUSTOS_FIXOS.custoHoraBase);
     document.getElementById("resultadosCustosFixos").style.display = "block";
     saveAppDataToLocalStorage();
-    if (showAlert) alert(i18next.t("alerts.fixedCostsCalculated"));
+    if (showAlert) alert("Custos fixos calculados, atualizados e salvos no seu navegador!");
 }
 
 let currentProjectResults = {};
 
 function calcularPrecoProjeto(showAlert = true) {
     if (GLOBAIS_CUSTOS_FIXOS.gastoMensalTotal === 0 || GLOBAIS_CUSTOS_FIXOS.diasTrabalhadosMes === 0 || GLOBAIS_CUSTOS_FIXOS.horasTrabalhoDia === 0) {
-        if (showAlert) alert(i18next.t("alerts.calculateFixedCostsFirst"));
+        if (showAlert) alert("Por favor, calcule e atualize os Custos Fixos na aba Configurar Custos Fixos primeiro.");
         const tabButton = document.querySelector("button[onclick*=\"tabCustos\"]");
-        if (tabButton) openTab({ currentTarget: tabButton }, "tabCustos");
+        if (tabButton) tabButton.click();
         return null;
     }
     const tempoTrabalhoProjetoHoras = getElementValue("tempoTrabalhoProjeto", true);
@@ -939,7 +259,7 @@ function calcularPrecoProjeto(showAlert = true) {
     const { total: somaCustosAdicionaisProjeto } = getDynamicListValues("custosAdicionaisProjetoList");
     const totalHorasTrabalhaveisMes = GLOBAIS_CUSTOS_FIXOS.diasTrabalhadosMes * GLOBAIS_CUSTOS_FIXOS.horasTrabalhoDia;
     if (totalHorasTrabalhaveisMes === 0) {
-        if (showAlert) alert(i18next.t("alerts.workDaysOrHoursCannotBeZero"));
+        if (showAlert) alert("Dias trabalhados ou horas por dia não podem ser zero. Verifique a configuração de custos.");
         return null;
     }
     const parcelaCustoPessoal = (GLOBAIS_CUSTOS_FIXOS.totalCustosPessoais / totalHorasTrabalhaveisMes) * tempoTotalMaoObraHoras;
@@ -954,7 +274,7 @@ function calcularPrecoProjeto(showAlert = true) {
     const valorLucro = custoTotalAlocadoAoProjeto * percentualLucro;
     const subtotalAntesImpostos = custoTotalAlocadoAoProjeto + valorLucro;
     const percentualImpostos = getElementValue("percentualImpostos", true) / 100;
-    const valorImpostos = subtotalAntesImpostos * percentualImpostos;
+    const valorImpostos = subtotalAntesImpostos * percentualImpostos; 
     const precoPix = subtotalAntesImpostos + valorImpostos;
     const taxaCartao = getElementValue("taxaCartao", true) / 100;
     const precoCartao = taxaCartao > 0 && taxaCartao < 1 ? precoPix / (1 - taxaCartao) : precoPix;
@@ -966,6 +286,7 @@ function calcularPrecoProjeto(showAlert = true) {
         projetosNecessariosMes: (custoTotalAlocadoAoProjeto - somaCustosAdicionaisProjeto > 0) ? Math.ceil(GLOBAIS_CUSTOS_FIXOS.gastoMensalTotal / (custoTotalAlocadoAoProjeto - somaCustosAdicionaisProjeto)) : Infinity,
         precoPorEntregavelAdicional: (numeroEntregaveis > 0 ? precoPix / numeroEntregaveis : 0) * 1.5,
         precoPorHoraAdicional: (tempoTotalMaoObraHoras > 0 ? precoPix / tempoTotalMaoObraHoras : 0) * 1.2,
+        // Informações do projeto para o resumo
         nomeContratante: getElementValue("nomeContratante"),
         dataProjeto: getElementValue("dataProjeto"),
         descricaoProjeto: getElementValue("descricaoProjeto"),
@@ -993,25 +314,26 @@ function calcularPrecoProjeto(showAlert = true) {
     document.getElementById("resResumoCustosAdicionais").textContent = formatCurrency(somaCustosAdicionaisProjeto);
     document.getElementById("resResumoLucro").textContent = formatCurrency(valorLucro);
     document.getElementById("resResumoImpostos").textContent = formatCurrency(valorImpostos);
-    document.getElementById("resProjetosNecessariosMes").textContent = isFinite(currentProjectResults.projetosNecessariosMes) ? currentProjectResults.projetosNecessariosMes : i18next.t("projectDetailsModal.notInformed");
+    document.getElementById("resProjetosNecessariosMes").textContent = isFinite(currentProjectResults.projetosNecessariosMes) ? currentProjectResults.projetosNecessariosMes : "N/A";
     document.getElementById("resPrecoEntregavelAdicional").textContent = formatCurrency(currentProjectResults.precoPorEntregavelAdicional);
     document.getElementById("resPrecoHoraAdicional").textContent = formatCurrency(currentProjectResults.precoPorHoraAdicional);
     document.getElementById("resultadosProjeto").style.display = "block";
     saveAppDataToLocalStorage();
-    if (showAlert) alert(i18next.t("alerts.projectPriceCalculated"));
+    if (showAlert) alert("Preço do projeto calculado e salvo no seu navegador!");
     return currentProjectResults;
 }
 
+// --- Histórico de Projetos ---
 function salvarProjetoNoHistorico() {
-    const nomeProjetoSalvo = prompt(i18next.t("alerts.saveProjectNamePrompt"));
+    const nomeProjetoSalvo = prompt("Digite um nome para este projeto (ex: Casamento Ana e João):");
     if (!nomeProjetoSalvo) {
-        alert(i18next.t("alerts.saveCancelledNoName"));
+        alert("Salvamento cancelado. É necessário fornecer um nome para o projeto.");
         return;
     }
 
-    const resultadosDoCalculo = calcularPrecoProjeto(false);
+    const resultadosDoCalculo = calcularPrecoProjeto(false); // Calcula sem alerta e pega os resultados
     if (!resultadosDoCalculo) {
-        alert(i18next.t("alerts.projectNotCalculated"));
+        alert("Não foi possível calcular o projeto. Verifique os dados e tente novamente.");
         return;
     }
 
@@ -1020,6 +342,7 @@ function salvarProjetoNoHistorico() {
         id: "proj_" + Date.now(),
         nomeProjetoSalvo: nomeProjetoSalvo,
         dataSalvamento: new Date().toISOString(),
+        // Dados do formulário do projeto
         nomeContratante: resultadosDoCalculo.nomeContratante,
         dataProjeto: resultadosDoCalculo.dataProjeto,
         descricaoProjeto: resultadosDoCalculo.descricaoProjeto,
@@ -1030,22 +353,23 @@ function salvarProjetoNoHistorico() {
         percentualLucro: resultadosDoCalculo.percentualLucro,
         percentualImpostos: resultadosDoCalculo.percentualImpostos,
         taxaCartao: resultadosDoCalculo.taxaCartao,
+        // Resultados do cálculo
         resultados: resultadosDoCalculo
     };
 
-    historico.unshift(novoProjetoSalvo);
+    historico.unshift(novoProjetoSalvo); // Adiciona no início para mais recentes primeiro
     localStorage.setItem(HISTORICO_PROJETOS_KEY, JSON.stringify(historico));
-    alert(i18next.t("alerts.projectSavedSuccess", { projectName: nomeProjetoSalvo }));
-    carregarHistoricoProjetos();
+    alert(`Projeto "${nomeProjetoSalvo}" salvo com sucesso no histórico!`);
+    carregarHistoricoProjetos(); // Atualiza a exibição na aba de histórico
 }
 
 function carregarHistoricoProjetos() {
     const listaHistoricoDiv = document.getElementById("listaHistoricoProjetos");
     const historico = JSON.parse(localStorage.getItem(HISTORICO_PROJETOS_KEY)) || [];
-    listaHistoricoDiv.innerHTML = "";
+    listaHistoricoDiv.innerHTML = ""; // Limpa a lista atual
 
     if (historico.length === 0) {
-        listaHistoricoDiv.innerHTML = `<p data-i18n="tabHistory.noProjectsSaved">${i18next.t("tabHistory.noProjectsSaved")}</p>`;
+        listaHistoricoDiv.innerHTML = "<p>Nenhum projeto salvo ainda.</p>";
         return;
     }
 
@@ -1054,15 +378,15 @@ function carregarHistoricoProjetos() {
         itemDiv.className = "historico-item";
         itemDiv.innerHTML = `
             <h4>${projeto.nomeProjetoSalvo}</h4>
-            <p><strong><span data-i18n="tabHistory.client">${i18next.t("tabHistory.client")}</span></strong> ${projeto.nomeContratante || i18next.t("projectDetailsModal.notInformed")}</p>
-            <p><strong><span data-i18n="tabHistory.projectDateLabel">${i18next.t("tabHistory.projectDateLabel")}</span></strong> ${formatDate(projeto.dataProjeto)}</p>
-            <p><strong><span data-i18n="tabHistory.description">${i18next.t("tabHistory.description")}</span></strong> ${projeto.descricaoProjeto ? (projeto.descricaoProjeto.substring(0, 100) + (projeto.descricaoProjeto.length > 100 ? "..." : "")) : i18next.t("projectDetailsModal.notInformed")}</p>
-            <p><strong><span data-i18n="tabHistory.pricePix">${i18next.t("tabHistory.pricePix")}</span></strong> ${formatCurrency(projeto.resultados.precoPix)}</p>
-            <p><strong><span data-i18n="tabHistory.priceCard">${i18next.t("tabHistory.priceCard")}</span></strong> ${formatCurrency(projeto.resultados.precoCartao)}</p>
-            <p><em><span data-i18n="tabHistory.savedAt">${i18next.t("tabHistory.savedAt")}</span> ${new Date(projeto.dataSalvamento).toLocaleString(i18next.language.startsWith("pt") ? "pt-BR" : i18next.language.split("-")[0])}</em></p>
+            <p><strong>Contratante:</strong> ${projeto.nomeContratante || "Não informado"}</p>
+            <p><strong>Data do Projeto:</strong> ${formatDate(projeto.dataProjeto)}</p>
+            <p><strong>Descrição:</strong> ${projeto.descricaoProjeto ? (projeto.descricaoProjeto.substring(0, 100) + (projeto.descricaoProjeto.length > 100 ? "..." : "")) : "Não informada"}</p>
+            <p><strong>Preço PIX/À Vista:</strong> ${formatCurrency(projeto.resultados.precoPix)}</p>
+            <p><strong>Preço Cartão:</strong> ${formatCurrency(projeto.resultados.precoCartao)}</p>
+            <p><em>Salvo em: ${new Date(projeto.dataSalvamento).toLocaleString("pt-BR")}</em></p>
             <div class="historico-item-actions">
-                <button onclick="verDetalhesProjeto(\'${projeto.id}\')" data-i18n="buttons.viewDetails">${i18next.t("buttons.viewDetails")}</button>
-                <button class="remove-btn" onclick="excluirProjetoDoHistorico(\'${projeto.id}\')" data-i18n="buttons.delete">${i18next.t("buttons.delete")}</button>
+                <button onclick="verDetalhesProjeto(\'${projeto.id}\')">Ver Detalhes</button>
+                <button class="remove-btn" onclick="excluirProjetoDoHistorico(\'${projeto.id}\')">Excluir</button>
             </div>
         `;
         listaHistoricoDiv.appendChild(itemDiv);
@@ -1070,73 +394,73 @@ function carregarHistoricoProjetos() {
 }
 
 function excluirProjetoDoHistorico(idProjeto) {
-    if (!confirm(i18next.t("alerts.confirmDeleteProject"))) {
+    if (!confirm("Tem certeza que deseja excluir este projeto do histórico? Esta ação não pode ser desfeita.")) {
         return;
     }
     let historico = JSON.parse(localStorage.getItem(HISTORICO_PROJETOS_KEY)) || [];
     historico = historico.filter(p => p.id !== idProjeto);
     localStorage.setItem(HISTORICO_PROJETOS_KEY, JSON.stringify(historico));
-    carregarHistoricoProjetos();
-    alert(i18next.t("alerts.projectDeleted"));
+    carregarHistoricoProjetos(); // Recarrega a lista
+    alert("Projeto excluído do histórico.");
 }
 
 function verDetalhesProjeto(idProjeto) {
     const historico = JSON.parse(localStorage.getItem(HISTORICO_PROJETOS_KEY)) || [];
     const projeto = historico.find(p => p.id === idProjeto);
     if (!projeto) {
-        alert(i18next.t("alerts.projectNotFound"));
+        alert("Projeto não encontrado!");
         return;
     }
 
     const modalBody = document.getElementById("modalBodyDetalhesProjeto");
     document.getElementById("modalNomeProjetoSalvo").textContent = projeto.nomeProjetoSalvo;
-
+    
     let detalhesHtml = `
-        <p><strong>${i18next.t("projectDetailsModal.clientNameLabel")}</strong> ${projeto.nomeContratante || i18next.t("projectDetailsModal.notInformed")}</p>
-        <p><strong>${i18next.t("projectDetailsModal.projectDateLabel")}</strong> ${formatDate(projeto.dataProjeto)}</p>
-        <p><strong>${i18next.t("projectDetailsModal.detailedDescriptionLabel")}</strong></p>
-        <p style="white-space: pre-wrap;">${projeto.descricaoProjeto || i18next.t("projectDetailsModal.notInformed")}</p>
+        <p><strong>Nome do Contratante:</strong> ${projeto.nomeContratante || "Não informado"}</p>
+        <p><strong>Data do Projeto:</strong> ${formatDate(projeto.dataProjeto)}</p>
+        <p><strong>Descrição Detalhada:</strong></p>
+        <p style="white-space: pre-wrap;">${projeto.descricaoProjeto || "Não informada"}</p>
         <hr>
-        <h4>${i18next.t("projectDetailsModal.calculationInfoTitle")}</h4>
-        <p>${i18next.t("projectDetailsModal.estimatedWorkTimeLabel")} ${projeto.tempoTrabalhoProjeto} ${i18next.t("projectDetailsModal.hours")}</p>
-        <p>${i18next.t("projectDetailsModal.deliverablesLabel")} ${projeto.numeroEntregaveis}</p>
-        <p>${i18next.t("projectDetailsModal.avgTimePerDeliverableLabel")} ${projeto.tempoEdicaoEntregavel} ${i18next.t("projectDetailsModal.minutes")}</p>
-        <p>${i18next.t("projectDetailsModal.profitPercentageLabel")} ${projeto.percentualLucro}%</p>
-        <p>${i18next.t("projectDetailsModal.taxPercentageLabel")} ${projeto.percentualImpostos}%</p>
-        <p>${i18next.t("projectDetailsModal.cardFeeLabel")} ${projeto.taxaCartao || 0}%</p>
+        <h4>Informações do Cálculo:</h4>
+        <p>Tempo de Trabalho Estimado: ${projeto.tempoTrabalhoProjeto} horas</p>
+        <p>Número de Entregáveis: ${projeto.numeroEntregaveis}</p>
+        <p>Tempo Médio por Entregável: ${projeto.tempoEdicaoEntregavel} minutos</p>
+        <p>Percentual de Lucro: ${projeto.percentualLucro}%</p>
+        <p>Percentual de Impostos: ${projeto.percentualImpostos}%</p>
+        <p>Taxa do Cartão: ${projeto.taxaCartao || 0}%</p>
     `;
 
     if (projeto.custosAdicionaisProjetoList && projeto.custosAdicionaisProjetoList.length > 0) {
-        detalhesHtml += `<h5>${i18next.t("projectDetailsModal.additionalProjectCostsTitle")}</h5><ul>`;
+        detalhesHtml += "<h5>Custos Adicionais do Projeto:</h5><ul>";
         projeto.custosAdicionaisProjetoList.forEach(custo => {
             detalhesHtml += `<li>${custo.desc}: ${formatCurrency(custo.val)}</li>`;
         });
         detalhesHtml += "</ul>";
     }
 
-    detalhesHtml += `<hr><h4>${i18next.t("projectDetailsModal.financialResultsTitle")}</h4>
-        <p><strong>${i18next.t("projectDetailsModal.totalAllocatedCostLabel")}</strong> ${formatCurrency(projeto.resultados.custoTotalAlocadoAoProjeto)}</p>
-        <p><strong>${i18next.t("projectDetailsModal.calculatedProfitLabel")}</strong> ${formatCurrency(projeto.resultados.valorLucro)}</p>
-        <p><strong>${i18next.t("projectDetailsModal.estimatedTaxesLabel")}</strong> ${formatCurrency(projeto.resultados.valorImpostos)}</p>
-        <p><strong>${i18next.t("projectDetailsModal.suggestedPricePixLabel")} ${formatCurrency(projeto.resultados.precoPix)}</strong></p>
-        <p><strong>${i18next.t("projectDetailsModal.suggestedPriceCardLabel")} ${formatCurrency(projeto.resultados.precoCartao)}</strong></p>
+    detalhesHtml += `<hr><h4>Resultados Financeiros:</h4>
+        <p>Custo Total Alocado ao Projeto: <strong>${formatCurrency(projeto.resultados.custoTotalAlocadoAoProjeto)}</strong></p>
+        <p>Valor do Lucro Calculado: <strong>${formatCurrency(projeto.resultados.valorLucro)}</strong></p>
+        <p>Valor dos Impostos Estimados: <strong>${formatCurrency(projeto.resultados.valorImpostos)}</strong></p>
+        <p><strong>Preço Sugerido (PIX/À Vista): ${formatCurrency(projeto.resultados.precoPix)}</strong></p>
+        <p><strong>Preço Sugerido (Cartão): ${formatCurrency(projeto.resultados.precoCartao)}</strong></p>
         <hr>
-        <h4>${i18next.t("projectDetailsModal.detailedFinancialSummaryTitle")}</h4>
-        <p>${i18next.t("projectDetailsModal.personalCostShareLabel")} ${formatCurrency(projeto.resultados.parcelaCustoPessoal)}</p>
-        <p>${i18next.t("projectDetailsModal.companyCostShareLabel")} ${formatCurrency(projeto.resultados.parcelaCustoEmpresaBase)}</p>
-        <p>${i18next.t("projectDetailsModal.salaryShareLabel")} ${formatCurrency(projeto.resultados.parcelaSalario)}</p>
-        <p>${i18next.t("projectDetailsModal._13thShareLabel")} ${formatCurrency(projeto.resultados.parcela13)}</p>
-        <p>${i18next.t("projectDetailsModal.vacationShareLabel")} ${formatCurrency(projeto.resultados.parcelaFerias)}</p>
-        <p>${i18next.t("projectDetailsModal.depreciationShareLabel")} ${formatCurrency(projeto.resultados.parcelaDepreciacao)}</p>
-        <p>${i18next.t("projectDetailsModal.occasionalExpensesShareLabel")} ${formatCurrency(projeto.resultados.parcelaGastosOcasionais)}</p>
-        <p>${i18next.t("projectDetailsModal.sumAdditionalCostsLabel")} ${formatCurrency(projeto.resultados.somaCustosAdicionaisProjeto)}</p>
-        <p>${i18next.t("projectDetailsModal.projectProfitLabel")} ${formatCurrency(projeto.resultados.valorLucro)}</p>
-        <p>${i18next.t("projectDetailsModal.projectTaxesLabel")} ${formatCurrency(projeto.resultados.valorImpostos)}</p>
-        <p>${i18next.t("projectDetailsModal.projectsNeededMonthlyLabel")} ${isFinite(projeto.resultados.projetosNecessariosMes) ? projeto.resultados.projetosNecessariosMes : i18next.t("projectDetailsModal.notInformed")}</p>
+        <h4>Resumo Financeiro Detalhado:</h4>
+        <p>Parcela do Custo Pessoal: ${formatCurrency(projeto.resultados.parcelaCustoPessoal)}</p>
+        <p>Parcela do Custo da Empresa: ${formatCurrency(projeto.resultados.parcelaCustoEmpresaBase)}</p>
+        <p>Parcela do Salário (Pró-labore): ${formatCurrency(projeto.resultados.parcelaSalario)}</p>
+        <p>Parcela do 13º: ${formatCurrency(projeto.resultados.parcela13)}</p>
+        <p>Parcela das Férias: ${formatCurrency(projeto.resultados.parcelaFerias)}</p>
+        <p>Parcela da Depreciação: ${formatCurrency(projeto.resultados.parcelaDepreciacao)}</p>
+        <p>Parcela dos Gastos Ocasionais: ${formatCurrency(projeto.resultados.parcelaGastosOcasionais)}</p>
+        <p>Soma dos Custos Adicionais do Projeto: ${formatCurrency(projeto.resultados.somaCustosAdicionaisProjeto)}</p>
+        <p>Lucro do Projeto: ${formatCurrency(projeto.resultados.valorLucro)}</p>
+        <p>Impostos do Projeto: ${formatCurrency(projeto.resultados.valorImpostos)}</p>
+        <p>Projetos como este necessários no mês: ${isFinite(projeto.resultados.projetosNecessariosMes) ? projeto.resultados.projetosNecessariosMes : "N/A"}</p>
         <hr>
-        <h4>${i18next.t("projectDetailsModal.optionalsTitle")}</h4>
-        <p>${i18next.t("projectDetailsModal.pricePerAdditionalDeliverableLabel")} ${formatCurrency(projeto.resultados.precoPorEntregavelAdicional)}</p>
-        <p>${i18next.t("projectDetailsModal.pricePerAdditionalHourLabel")} ${formatCurrency(projeto.resultados.precoPorHoraAdicional)}</p>
+        <h4>Opcionais:</h4>
+        <p>Preço Sugerido por Entregável Adicional: ${formatCurrency(projeto.resultados.precoPorEntregavelAdicional)}</p>
+        <p>Preço Sugerido por Hora Adicional de Trabalho: ${formatCurrency(projeto.resultados.precoPorHoraAdicional)}</p>
     `;
 
     modalBody.innerHTML = detalhesHtml;
@@ -1151,18 +475,20 @@ function imprimirDetalhesProjeto() {
     window.print();
 }
 
-async function initializeApp() {
-    await initI18next();
-    loadTheme();
-    loadAppDataFromLocalStorage();
-    carregarHistoricoProjetos();
+// --- Inicialização ---
+document.addEventListener("DOMContentLoaded", () => {
+    loadTheme(); // Carrega o tema salvo ou padrão
+    loadAppDataFromLocalStorage(); // Carrega os dados da aplicação
+    carregarHistoricoProjetos(); // Carrega o histórico de projetos
 
+    // Adiciona listeners para salvar dados ao alterar campos
     const inputs = document.querySelectorAll("input, textarea");
     inputs.forEach(input => {
         input.addEventListener("change", saveAppDataToLocalStorage);
-        input.addEventListener("keyup", saveAppDataToLocalStorage);
+        input.addEventListener("keyup", saveAppDataToLocalStorage); // Para salvar enquanto digita
     });
 
+    // Listener para o seletor de tema
     const themeSelector = document.getElementById("themeSelector");
     if (themeSelector) {
         themeSelector.addEventListener("change", (event) => {
@@ -1170,28 +496,23 @@ async function initializeApp() {
         });
     }
 
+    // Adicionar itens iniciais para teste rápido se não houver dados salvos
     const savedAppData = localStorage.getItem(APP_DATA_KEY);
     if (!savedAppData) {
-        // Add initial example data if no saved data exists, using translated keys
-        addCustoPessoalItem(i18next.t("initialData.rent"), 1200);
-        addCustoEmpresaItem(i18next.t("initialData.adobeSoftware"), 150);
-        addEquipamentoItem(i18next.t("initialData.sonyCamera"), 10000);
-        addCustoAdicionalProjetoItem(i18next.t("initialData.transport"), 50);
+        addCustoPessoalItem("Aluguel", 1200);
+        addCustoEmpresaItem("Software Adobe", 150);
+        addEquipamentoItem("Câmera Sony A7III", 10000);
+        addCustoAdicionalProjetoItem("Transporte", 50);
     }
-
+    
+    // Ativar a primeira aba por padrão ou a salva
     const appData = JSON.parse(localStorage.getItem(APP_DATA_KEY)) || {};
     const activeTab = appData.activeTab || "tabCustos";
     const tabButtonToActivate = document.querySelector(`.tab-button[onclick*="${activeTab}"]`);
     if (tabButtonToActivate) {
         openTab({ currentTarget: tabButtonToActivate }, activeTab);
     } else {
-        const firstTabButton = document.querySelector(".tab-button");
-        if (firstTabButton) {
-             openTab({ currentTarget: firstTabButton }, firstTabButton.getAttribute("onclick").split("'")[1]);
-        }
+        // Fallback se a aba salva não for encontrada (ex: após uma mudança de ID de aba)
+        document.querySelector('.tab-button').click(); 
     }
-    updateContent(); // Ensure content is updated after all initial loads and potential language changes
-}
-
-document.addEventListener("DOMContentLoaded", initializeApp);
-
+});
