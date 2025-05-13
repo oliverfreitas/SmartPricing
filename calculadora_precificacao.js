@@ -1,3 +1,9 @@
+/*
+Copyright © 2025 Oliver Freitas. Todos os direitos reservados.
+Este arquivo é parte do projeto SmartPricing.
+O uso não autorizado, reprodução ou distribuição deste código é estritamente proibido sem permissão prévia.
+Contato: oliverfreitas@gmail.com
+*/
 // Variáveis globais para armazenar os resultados dos custos fixos
 let GLOBAIS_CUSTOS_FIXOS = {
     totalCustosPessoais: 0,
